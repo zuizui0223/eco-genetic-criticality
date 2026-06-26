@@ -2,6 +2,8 @@ name: Import theorem bundle
 on:
   push:
     branches: [go]
+  pull_request:
+    branches: [main]
 permissions:
   contents: write
 jobs:
