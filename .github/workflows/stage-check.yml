@@ -1,0 +1,39 @@
+name: Check bootstrap stage
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: bootstrap
+          fetch-depth: 0
+      - name: Check staged import commit
+        shell: bash
+        run: |
+          set +e
+          exec > stage-check.txt 2>&1
+          set -x
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          mkdir -p causal_model
+          cp source/causal_model/multipatch_criticality_dynamics.py causal_model/
+          rm -rf source
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add causal_model/multipatch_criticality_dynamics.py
+          echo add_status=$?
+          git commit -m 'stage diagnostic'
+          echo commit_status=$?
+          git status --short
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stage-check
+          path: stage-check.txt
