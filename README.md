@@ -2,13 +2,13 @@
 
 A theorem-first research repository for finite-population eco-genetic criticality.
 
-## Questions
+## Core questions
 
 - **H1:** When can interaction feedback alter potential high-trait viability?
 - **H2:** Under what declared conditions can genetic warning precede realised high-trait loss?
 - **H3:** At fixed total area, when do isolation, migration rescue, and migration erosion produce different trait and genetic outcomes?
 
-## Research architecture
+## Architecture
 
 ```text
 mathematical theorem
@@ -18,8 +18,8 @@ mathematical theorem
 -> empirical measurement design
 ```
 
-Potential viability, realised trait occupancy, allele persistence, and genetic diversity are distinct states.
+Potential viability, realised trait occupancy, allele persistence, and diversity are separate states.
 
-## Scope
+## Provenance
 
-This is the active H1–H3 theorem and finite-bin closure program migrated from `microdonta`. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. See `MIGRATION_MANIFEST.md`.
+The active theorem core was migrated from `zuizui0223/microdonta` while unrelated RACH / generic ABM and Campanula case-study programs remain outside this repository.
