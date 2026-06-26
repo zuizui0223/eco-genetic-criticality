@@ -1,0 +1,26 @@
+name: Check source snapshot
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check fixed source commit
+        shell: bash
+        run: |
+          set +e
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          echo clone_status=$? > source-check.txt
+          cd source || exit 0
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d >> ../source-check.txt 2>&1
+          echo fetch_status=$? >> ../source-check.txt
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d >> ../source-check.txt 2>&1
+          echo checkout_status=$? >> ../source-check.txt
+          test -f causal_model/multipatch_criticality_dynamics.py
+          echo dynamics_status=$? >> ../source-check.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-check
+          path: source-check.txt
