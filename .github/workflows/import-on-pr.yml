@@ -1,0 +1,158 @@
+name: Import eco-genetic core
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.event.pull_request.head.ref == 'migration-pr' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: migration-pr
+          fetch-depth: 0
+      - name: Import selected theorem core
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          shopt -s nullglob
+          mkdir -p causal_model tests docs examples .github/workflows
+          copy_matches() {
+            local out="$1"; shift
+            local pattern file
+            for pattern in "$@"; do
+              for file in source/$pattern; do
+                [ -f "$file" ] || continue
+                cp "$file" "$out/"
+              done
+            done
+          }
+          copy_matches causal_model \
+            'causal_model/eco_genetic*.py' \
+            'causal_model/multipatch_criticality*.py' \
+            'causal_model/patch_genetic*.py' \
+            'causal_model/finite_bin*.py' \
+            'causal_model/stochastic_refuge*.py' \
+            'causal_model/migration_safe*.py' \
+            'causal_model/network_*.py' \
+            'causal_model/probabilistic_h_alpha*.py' \
+            'causal_model/colonization_recruitment_factorization.py' \
+            'causal_model/theorem_projection_ledger.py'
+          copy_matches tests \
+            'tests/test_eco_genetic*.py' \
+            'tests/test_multipatch_criticality*.py' \
+            'tests/test_patch_genetic*.py' \
+            'tests/test_finite_bin*.py' \
+            'tests/test_stochastic_refuge*.py' \
+            'tests/test_migration_safe*.py' \
+            'tests/test_network_*.py' \
+            'tests/test_probabilistic_h_alpha*.py' \
+            'tests/test_colonization_recruitment_factorization.py' \
+            'tests/test_theorem_projection_ledger.py'
+          copy_matches docs \
+            'docs/eco_genetic*.md' \
+            'docs/general_eco_genetic*.md' \
+            'docs/three_hypotheses_status.md' \
+            'docs/multipatch_criticality*.md' \
+            'docs/multipatch_phase_diagram*.md' \
+            'docs/patch_genetic*.md' \
+            'docs/finite_bin*.md' \
+            'docs/stochastic_refuge*.md' \
+            'docs/migration_safe*.md' \
+            'docs/network_*.md' \
+            'docs/probabilistic_h_alpha*.md' \
+            'docs/colonization_recruitment_factorization.md' \
+            'docs/theorem_projection_ledger.md'
+          copy_matches examples \
+            'examples/eco_genetic*.py' \
+            'examples/multipatch_phase_diagram*.py' \
+            'examples/finite_bin*.py' \
+            'examples/probabilistic_h_alpha*.py'
+          : > causal_model/__init__.py
+          cat > pyproject.toml <<'EOF'
+          [build-system]
+          requires = ["setuptools>=64", "wheel"]
+          build-backend = "setuptools.build_meta"
+
+          [project]
+          name = "eco-genetic-criticality"
+          version = "0.1.0"
+          description = "Theorem-first models of eco-genetic criticality under finite populations."
+          readme = "README.md"
+          requires-python = ">=3.10"
+          dependencies = ["numpy>=1.24", "pandas>=2.0"]
+
+          [project.optional-dependencies]
+          dev = ["pytest>=8.0", "matplotlib>=3.7"]
+
+          [tool.setuptools]
+          packages = ["causal_model"]
+
+          [tool.pytest.ini_options]
+          testpaths = ["tests"]
+          addopts = "-q"
+          EOF
+          cat > README.md <<'EOF'
+          # Eco-genetic criticality
+
+          A theorem-first research repository for finite-population eco-genetic criticality.
+
+          ## Questions
+          - **H1:** interaction feedback and potential high-trait viability
+          - **H2:** conditional or probabilistic genetic warning before realised high-trait loss
+          - **H3:** fragmentation under isolation, migration rescue, and migration erosion
+
+          ## Architecture
+          ```text
+          mathematical theorem -> declared model projection -> finite-population closure -> simulation robustness -> empirical measurement design
+          ```
+
+          Potential viability, realised trait occupancy, allele persistence, and diversity are distinct states.
+          EOF
+          cat > MIGRATION_MANIFEST.md <<'EOF'
+          # Migration manifest
+
+          Source snapshot: `zuizui0223/microdonta@7dfec05444b92e99a914cb30ee1177523fd98b2d`.
+
+          Included: H1-H3 theorem core, finite-bin closure, network/refuge certificates, selected tests, documentation, and examples.
+          Excluded: RACH/rule-transition methods, Campanula-Izu case study, Streamlit app, attraction-trait work, and unrelated ABM families.
+          EOF
+          cat > .github/workflows/ci.yml <<'EOF'
+          name: CI
+          on:
+            pull_request:
+            push:
+              branches: [main]
+          jobs:
+            tests:
+              runs-on: ubuntu-latest
+              strategy:
+                fail-fast: false
+                matrix:
+                  python-version: ['3.10', '3.11', '3.12']
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-python@v5
+                  with:
+                    python-version: ${{ matrix.python-version }}
+                - run: python -m pip install --upgrade pip
+                - run: python -m pip install -e '.[dev]'
+                - run: pytest -q
+          EOF
+          rm -rf source
+          rm .github/workflows/import-on-pr.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md MIGRATION_MANIFEST.md pyproject.toml causal_model tests docs examples .github/workflows/ci.yml
+          git commit -m 'Import theorem-first eco-genetic core from microdonta'
+          git push origin HEAD:migration-pr
