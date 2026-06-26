@@ -1,0 +1,43 @@
+name: Diagnose migration retry
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  debug:
+    if: github.event.pull_request.head.ref == 'migration-pr'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: migration-pr
+      - name: Capture retry trace
+        shell: bash
+        run: |
+          set +e
+          exec > migration-debug.txt 2>&1
+          set -x
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          shopt -s nullglob
+          mkdir -p causal_model tests docs examples .github/workflows
+          find source/causal_model -maxdepth 1 -type f \( -name 'eco_genetic*.py' -o -name 'multipatch_criticality*.py' -o -name 'patch_genetic*.py' -o -name 'finite_bin*.py' -o -name 'stochastic_refuge*.py' -o -name 'migration_safe*.py' -o -name 'network_*.py' -o -name 'probabilistic_h_alpha*.py' -o -name 'colonization_recruitment_factorization.py' -o -name 'theorem_projection_ledger.py' \) -exec cp {} causal_model/ \;
+          echo causal_copy=$?
+          find source/tests -maxdepth 1 -type f \( -name 'test_eco_genetic*.py' -o -name 'test_multipatch_criticality*.py' -o -name 'test_patch_genetic*.py' -o -name 'test_finite_bin*.py' -o -name 'test_stochastic_refuge*.py' -o -name 'test_migration_safe*.py' -o -name 'test_network_*.py' -o -name 'test_probabilistic_h_alpha*.py' -o -name 'test_colonization_recruitment_factorization.py' -o -name 'test_theorem_projection_ledger.py' \) -exec cp {} tests/ \;
+          echo test_copy=$?
+          find source/docs -maxdepth 1 -type f \( -name 'eco_genetic*.md' -o -name 'general_eco_genetic*.md' -o -name 'three_hypotheses_status.md' -o -name 'multipatch_criticality*.md' -o -name 'multipatch_phase_diagram*.md' -o -name 'patch_genetic*.md' -o -name 'finite_bin*.md' -o -name 'stochastic_refuge*.md' -o -name 'migration_safe*.md' -o -name 'network_*.md' -o -name 'probabilistic_h_alpha*.md' -o -name 'colonization_recruitment_factorization.md' -o -name 'theorem_projection_ledger.md' \) -exec cp {} docs/ \;
+          echo docs_copy=$?
+          find source/examples -maxdepth 1 -type f \( -name 'eco_genetic*.py' -o -name 'multipatch_phase_diagram*.py' -o -name 'finite_bin*.py' -o -name 'probabilistic_h_alpha*.py' \) -exec cp {} examples/ \;
+          echo examples_copy=$?
+          rm -rf source
+          git add -A
+          echo git_add=$?
+          git status --short
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: migration-debug
+          path: migration-debug.txt
