@@ -3,6 +3,8 @@ name: Bootstrap theorem core
 on:
   push:
     branches: [bootstrap]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
