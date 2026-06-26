@@ -1,0 +1,163 @@
+name: Bootstrap theorem core
+
+on:
+  push:
+    branches: [bootstrap]
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    # This workflow is intentionally one-shot and removes itself before commit.
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: bootstrap
+          fetch-depth: 0
+      - name: Copy selected theorem-first snapshot
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+
+          mkdir -p causal_model tests docs examples .github/workflows
+
+          files=(
+            causal_model/eco_genetic_principles.py
+            causal_model/eco_genetic_lag_theory.py
+            causal_model/eco_genetic_constitutive_theory.py
+            causal_model/multipatch_criticality_dynamics.py
+            causal_model/multipatch_criticality_ensemble.py
+            causal_model/patch_genetic_drift_theory.py
+            causal_model/finite_bin_closure_bounds.py
+            causal_model/stochastic_refuge_invariance.py
+            causal_model/migration_safe_refuge.py
+            causal_model/network_allele_floor_theory.py
+            causal_model/network_high_trait_floor_theory.py
+            causal_model/probabilistic_h_alpha_lead_theory.py
+            causal_model/colonization_recruitment_factorization.py
+            causal_model/theorem_projection_ledger.py
+            causal_model/trait_space_theory.py
+            causal_model/channel_identifiability_theory.py
+            causal_model/proxy_calibration_theory.py
+            causal_model/__init__.py
+            tests/test_eco_genetic_principles.py
+            tests/test_eco_genetic_lag_theory.py
+            tests/test_eco_genetic_constitutive_theory.py
+            tests/test_multipatch_criticality_dynamics.py
+            tests/test_multipatch_criticality_ensemble.py
+            tests/test_patch_genetic_drift_theory.py
+            tests/test_finite_bin_closure_bounds.py
+            tests/test_stochastic_refuge_invariance.py
+            tests/test_migration_safe_refuge.py
+            tests/test_network_allele_floor_theory.py
+            tests/test_network_high_trait_floor_theory.py
+            tests/test_probabilistic_h_alpha_lead_theory.py
+            tests/test_colonization_recruitment_factorization.py
+            tests/test_theorem_projection_ledger.py
+            tests/test_trait_space_theory.py
+            tests/test_channel_identifiability_theory.py
+            tests/test_proxy_calibration_theory.py
+            docs/eco_genetic_hypothesis_program.md
+            docs/general_eco_genetic_principles.md
+            docs/eco_genetic_constitutive_theory.md
+            docs/three_hypotheses_status.md
+            docs/criticality_theory_simulation_repairs.md
+            docs/multipatch_criticality_dynamics_contract.md
+            docs/multipatch_phase_diagram_pilot.md
+            docs/patch_genetic_drift_theory.md
+            docs/finite_bin_closure_bounds.md
+            docs/stochastic_refuge_invariance_theorem.md
+            docs/migration_safe_refuge_bound.md
+            docs/network_allele_floor_theorem.md
+            docs/network_high_trait_floor_theorem.md
+            docs/probabilistic_h_alpha_lead_theorem.md
+            docs/colonization_recruitment_factorization.md
+            docs/theorem_projection_ledger.md
+            docs/trait_space_contraction_theorem.md
+            docs/channel_identifiability_theorem.md
+            docs/proxy_calibration_theorem.md
+            examples/eco_genetic_lag_demo.py
+            examples/multipatch_phase_diagram_pilot.py
+            examples/finite_bin_closure_bounds_demo.py
+            examples/probabilistic_h_alpha_lead_demo.py
+            examples/channel_identifiability_demo.py
+            examples/proxy_calibration_demo.py
+          )
+
+          for file in "${files[@]}"; do
+            if [ -f "source/$file" ]; then
+              mkdir -p "$(dirname "$file")"
+              cp "source/$file" "$file"
+            else
+              echo "Missing selected source file: $file" >&2
+              exit 1
+            fi
+          done
+
+          cat > requirements-dev.txt <<'EOF'
+          pytest>=8.0
+          EOF
+
+          cat > .github/workflows/ci.yml <<'EOF'
+          name: CI
+          on:
+            pull_request:
+            push:
+              branches: [main]
+          jobs:
+            test:
+              runs-on: ubuntu-latest
+              strategy:
+                fail-fast: false
+                matrix:
+                  python-version: ['3.10', '3.11', '3.12']
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-python@v5
+                  with:
+                    python-version: ${{ matrix.python-version }}
+                - run: python -m pip install --upgrade pip pytest
+                - run: pytest -q
+          EOF
+
+          cat > README.md <<'EOF'
+          # Eco-genetic criticality
+
+          A theorem-first research repository for eco-genetic criticality under finite populations.
+
+          ## Questions
+
+          - **H1:** When can patch configuration and positive interaction feedback create a transition in potential high-trait viability?
+          - **H2:** Under what declared conditions can genetic warning precede realised high-trait loss?
+          - **H3:** At fixed total area, when do isolation, migration rescue, and migration erosion produce different trait and genetic outcomes?
+
+          ## Research architecture
+
+          ```text
+          mathematical theorem
+          -> declared model projection
+          -> finite-population closure
+          -> simulation robustness test
+          -> empirical measurement design
+          ```
+
+          Potential viability, realised trait occupancy, allele persistence, and genetic diversity are separate states.
+
+          ## Provenance
+
+          This repository was bootstrapped from the theorem-core snapshot of `zuizui0223/microdonta` at commit `7dfec05444b92e99a914cb30ee1177523fd98b2d` (after network high-trait floor theorem merge). The old repository remains a legacy archive while unrelated RACH and Campanula programs are split separately.
+          EOF
+
+          rm .github/workflows/bootstrap-core.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Bootstrap theorem-first eco-genetic core from microdonta' || exit 0
+          git push origin HEAD:bootstrap
