@@ -1,0 +1,162 @@
+name: Import eco-genetic theory core
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Copy selected theorem-first files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          shopt -s nullglob
+          mkdir -p causal_model tests docs examples
+          copy_patterns() {
+            local destination="$1"; shift
+            local pattern file
+            for pattern in "$@"; do
+              for file in source/$pattern; do
+                test -f "$file" || continue
+                cp "$file" "$destination/"
+              done
+            done
+          }
+          copy_patterns causal_model \
+            'causal_model/eco_genetic*.py' \
+            'causal_model/multipatch_criticality*.py' \
+            'causal_model/patch_genetic*.py' \
+            'causal_model/finite_bin_closure_bounds.py' \
+            'causal_model/stochastic_refuge_invariance.py' \
+            'causal_model/migration_safe_refuge.py' \
+            'causal_model/network_*.py' \
+            'causal_model/probabilistic_h_alpha_lead_theory.py' \
+            'causal_model/colonization_recruitment_factorization.py' \
+            'causal_model/theorem_projection_ledger.py'
+          copy_patterns tests \
+            'tests/test_eco_genetic*.py' \
+            'tests/test_multipatch_criticality*.py' \
+            'tests/test_patch_genetic*.py' \
+            'tests/test_finite_bin_closure_bounds.py' \
+            'tests/test_stochastic_refuge_invariance.py' \
+            'tests/test_migration_safe_refuge.py' \
+            'tests/test_network_*.py' \
+            'tests/test_probabilistic_h_alpha_lead_theory.py' \
+            'tests/test_colonization_recruitment_factorization.py' \
+            'tests/test_theorem_projection_ledger.py'
+          copy_patterns docs \
+            'docs/eco_genetic*.md' \
+            'docs/general_eco_genetic*.md' \
+            'docs/three_hypotheses_status.md' \
+            'docs/multipatch_criticality*.md' \
+            'docs/multipatch_phase_diagram*.md' \
+            'docs/patch_genetic*.md' \
+            'docs/finite_bin_closure_bounds.md' \
+            'docs/stochastic_refuge_invariance*.md' \
+            'docs/migration_safe_refuge*.md' \
+            'docs/network_*.md' \
+            'docs/probabilistic_h_alpha*.md' \
+            'docs/colonization_recruitment_factorization.md' \
+            'docs/theorem_projection_ledger.md'
+          copy_patterns examples \
+            'examples/eco_genetic*.py' \
+            'examples/multipatch_phase_diagram*.py' \
+            'examples/finite_bin_closure_bounds*.py' \
+            'examples/probabilistic_h_alpha*.py'
+          touch causal_model/__init__.py
+          cat > pyproject.toml <<'EOF'
+          [build-system]
+          requires = ["setuptools>=64", "wheel"]
+          build-backend = "setuptools.build_meta"
+
+          [project]
+          name = "eco-genetic-criticality"
+          version = "0.1.0"
+          description = "Theorem-first models of eco-genetic criticality under finite populations."
+          readme = "README.md"
+          requires-python = ">=3.10"
+          dependencies = ["numpy>=1.24", "pandas>=2.0"]
+
+          [project.optional-dependencies]
+          dev = ["pytest>=8.0", "matplotlib>=3.7"]
+
+          [tool.setuptools]
+          packages = ["causal_model"]
+
+          [tool.pytest.ini_options]
+          testpaths = ["tests"]
+          addopts = "-q"
+          EOF
+          cat > README.md <<'EOF'
+          # Eco-genetic criticality
+
+          A theorem-first research repository for finite-population eco-genetic criticality.
+
+          ## Questions
+          - **H1:** When can interaction feedback alter potential high-trait viability?
+          - **H2:** Under what declared conditions can genetic warning precede realised high-trait loss?
+          - **H3:** At fixed total area, how do isolation, migration rescue, and migration erosion alter trait and genetic outcomes?
+
+          ## Architecture
+          ```text
+          mathematical theorem
+          -> declared model projection
+          -> finite-population closure
+          -> simulation robustness test
+          -> empirical measurement design
+          ```
+
+          Potential viability, realised trait occupancy, allele persistence, and diversity are separate states.
+
+          ## Provenance
+          Imported from `zuizui0223/microdonta@7dfec05444b92e99a914cb30ee1177523fd98b2d`.
+          EOF
+          cat > MIGRATION_MANIFEST.md <<'EOF'
+          # Migration manifest
+
+          Source snapshot: `zuizui0223/microdonta@7dfec05444b92e99a914cb30ee1177523fd98b2d`.
+
+          Included: H1–H3 theorem modules, finite-bin closure, network/refuge certificates, selected tests, documentation, and reproducibility examples.
+
+          Excluded: generic RACH/rule-transition methods, Campanula-Izu case-study code, Streamlit application, attraction-trait work, and unrelated ABM families.
+          EOF
+          cat > .github/workflows/ci.yml <<'EOF'
+          name: CI
+          on:
+            pull_request:
+            push:
+              branches: [main]
+          jobs:
+            tests:
+              runs-on: ubuntu-latest
+              strategy:
+                fail-fast: false
+                matrix:
+                  python-version: ['3.10', '3.11', '3.12']
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-python@v5
+                  with:
+                    python-version: ${{ matrix.python-version }}
+                - run: python -m pip install --upgrade pip
+                - run: python -m pip install -e '.[dev]'
+                - run: pytest -q
+          EOF
+          rm -rf source
+          rm .github/workflows/import-eco-core.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Import theorem-first eco-genetic core from microdonta'
+          git push origin HEAD:main
