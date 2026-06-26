@@ -1,0 +1,39 @@
+name: Diagnose theorem bundle
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  debug:
+    if: github.event.pull_request.head.ref == 'go'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source bundle
+        shell: bash
+        run: |
+          set +e
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          : > bundle-debug.txt
+          for f in \
+            causal_model/eco_genetic_principles.py \
+            causal_model/eco_genetic_lag_theory.py \
+            causal_model/patch_genetic_drift_theory.py \
+            causal_model/probabilistic_h_alpha_lead_theory.py \
+            tests/test_eco_genetic_principles.py \
+            tests/test_eco_genetic_lag_theory.py \
+            tests/test_patch_genetic_drift_theory.py \
+            tests/test_probabilistic_h_alpha_lead_theory.py \
+            docs/eco_genetic_hypothesis_program.md \
+            docs/patch_genetic_drift_theory.md \
+            docs/probabilistic_h_alpha_lead_theorem.md; do
+              test -f "source/$f"; echo "$f:$?" >> bundle-debug.txt
+          done
+          exit 0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bundle-debug
+          path: bundle-debug.txt
