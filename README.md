@@ -3,10 +3,9 @@
 A theorem-first research repository for finite-population eco-genetic criticality.
 
 ## Questions
-
-- **H1:** When can interaction feedback alter potential high-trait viability?
-- **H2:** Under what declared conditions can genetic warning precede realised high-trait loss?
-- **H3:** At fixed total area, when do isolation, migration rescue, and migration erosion yield distinct trait and genetic outcomes?
+- **H1:** interaction feedback and potential high-trait viability
+- **H2:** conditional or probabilistic genetic warning before realised high-trait loss
+- **H3:** fixed-total-area fragmentation under isolation, migration rescue, and erosion
 
 ## Architecture
 
