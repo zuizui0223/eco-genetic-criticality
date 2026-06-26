@@ -1,0 +1,43 @@
+name: Import theorem bundle
+on:
+  push:
+    branches: [core]
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: core
+      - name: Copy theorem certificates
+        run: |
+          git clone --depth 1 https://github.com/zuizui0223/microdonta.git source
+          cd source
+          git fetch --depth 1 origin 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          git checkout --detach 7dfec05444b92e99a914cb30ee1177523fd98b2d
+          cd ..
+          mkdir -p causal_model tests docs
+          cp source/causal_model/eco_genetic_principles.py causal_model/
+          cp source/causal_model/eco_genetic_lag_theory.py causal_model/
+          cp source/causal_model/eco_genetic_constitutive_theory.py causal_model/
+          cp source/causal_model/patch_genetic_drift_theory.py causal_model/
+          cp source/causal_model/probabilistic_h_alpha_lead_theory.py causal_model/
+          cp source/tests/test_eco_genetic_principles.py tests/
+          cp source/tests/test_eco_genetic_lag_theory.py tests/
+          cp source/tests/test_eco_genetic_constitutive_theory.py tests/
+          cp source/tests/test_patch_genetic_drift_theory.py tests/
+          cp source/tests/test_probabilistic_h_alpha_lead_theory.py tests/
+          cp source/docs/eco_genetic_hypothesis_program.md docs/
+          cp source/docs/eco_genetic_constitutive_theory.md docs/
+          cp source/docs/patch_genetic_drift_theory.md docs/
+          cp source/docs/probabilistic_h_alpha_lead_theorem.md docs/
+          rm -rf source
+          rm .github/workflows/import-theory.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add causal_model tests docs .github/workflows
+          git commit -m 'Import eco-genetic theorem certificates'
+          git push origin HEAD:core
