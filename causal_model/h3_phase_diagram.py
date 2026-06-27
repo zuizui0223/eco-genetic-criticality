@@ -14,7 +14,7 @@ from causal_model.h3_landscape_presets import (
     equal_isolated,
     one_large,
 )
-from causal_model.network_h3_experiments import H3EnsembleSummary, simulate_h3_ensemble
+from causal_model.network_h3_experiments import simulate_h3_ensemble
 from causal_model.network_h3_lifecycle import NetworkLifecycleParameters, PatchState
 
 
@@ -100,15 +100,48 @@ def standard_h3_landscapes(spec: H3PhaseDiagramSpec) -> tuple[LandscapePreset, .
     )
 
 
+def _apportion(total: int, capacities: Sequence[int]) -> tuple[int, ...]:
+    """Allocate an exact total proportionally, without exceeding per-patch caps."""
+    if total < 0 or total > sum(capacities):
+        raise ValueError("total must lie between zero and the sum of capacities")
+    capacity_total = sum(capacities)
+    quotas = tuple(total * capacity / capacity_total for capacity in capacities)
+    allocated = [int(quota) for quota in quotas]
+    remaining = total - sum(allocated)
+    order = sorted(
+        range(len(capacities)),
+        key=lambda index: (quotas[index] - allocated[index], capacities[index], -index),
+        reverse=True,
+    )
+    for index in order:
+        if remaining == 0:
+            break
+        if allocated[index] < capacities[index]:
+            allocated[index] += 1
+            remaining -= 1
+    if remaining:
+        raise RuntimeError("failed to apportion total within capacities")
+    return tuple(allocated)
+
+
 def initial_states_for_preset(preset: LandscapePreset, spec: H3PhaseDiagramSpec) -> tuple[PatchState, ...]:
-    """Create matched-composition starting states proportional to patch capacity."""
-    states: list[PatchState] = []
-    for capacity in preset.capacities:
-        population = round(capacity * spec.initial_occupancy_fraction)
-        high_trait = round(population * spec.initial_high_trait_fraction)
-        allele_copies = round(2 * population * spec.initial_high_allele_frequency)
-        states.append(PatchState(population, high_trait, allele_copies))
-    return tuple(states)
+    """Create states with exactly equal global starting totals across landscapes.
+
+    Population is apportioned by capacity; high-trait individuals are then
+    apportioned within those populations; diploid allele copies are apportioned
+    within the resulting two-copy capacities.  This avoids a partition-specific
+    rounding artifact in the starting composition.
+    """
+    total_population = round(spec.total_capacity * spec.initial_occupancy_fraction)
+    populations = _apportion(total_population, preset.capacities)
+    total_high_trait = round(total_population * spec.initial_high_trait_fraction)
+    high_trait = _apportion(total_high_trait, populations)
+    total_allele_copies = round(2 * total_population * spec.initial_high_allele_frequency)
+    allele_copies = _apportion(total_allele_copies, tuple(2 * population for population in populations))
+    return tuple(
+        PatchState(population, trait, copies)
+        for population, trait, copies in zip(populations, high_trait, allele_copies)
+    )
 
 
 def _parameters(
