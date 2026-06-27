@@ -1,13 +1,14 @@
 """A transparent sufficient-condition chain linking canonical H1, H2 and H3.
 
 This module does not convert separate assumptions into a universal ecological
-law.  Instead it records precisely when four declared components can be
+law.  Instead it records precisely when five declared components can be
 composed:
 
 1. H1 has two stable interaction branches with a high-trait margin switch;
-2. effective size is an increasing affine function of interaction;
-3. the H2 expected-drift map has a strict genetic lead on the low branch; and
-4. H3 fragmentation removes local support, unless external arrivals satisfy a
+2. H3 support loss is explicitly declared to select the low interaction branch;
+3. effective size is an increasing affine function of interaction;
+4. the H2 expected-drift map has a strict genetic lead on the low branch; and
+5. H3 fragmentation removes local support, unless external arrivals satisfy a
    separately declared rescue condition.
 """
 from __future__ import annotations
@@ -25,10 +26,11 @@ from causal_model.canonical_h2_h3_certificates import (
 
 @dataclass(frozen=True)
 class CoupledEcoGeneticCertificate:
-    """Composed theorem status for the explicitly declared H1→H2→H3 skeleton."""
+    """Composed status for the explicitly declared H1→H2→H3 skeleton."""
 
     h1_branch_switch_certified: bool
     h3_fragmentation_removes_support_certified: bool
+    support_loss_selects_low_branch_declared: bool
     low_branch_effective_population_size: float | None
     high_branch_effective_population_size: float | None
     lower_effective_size_on_low_branch_certified: bool
@@ -71,6 +73,7 @@ def coupled_eco_genetic_certificate(
     h1: CanonicalH1Certificate,
     h2_low_branch: CanonicalH2LeadCertificate,
     h3_fragmentation: CanonicalH3FragmentationCertificate,
+    support_loss_selects_low_branch: bool,
     baseline_effective_population_size: float,
     interaction_slope: float,
     h3_rescue: CanonicalH3RescueCertificate | None = None,
@@ -78,12 +81,12 @@ def coupled_eco_genetic_certificate(
 ) -> CoupledEcoGeneticCertificate:
     """Compose canonical H1, H2 and H3 conclusions under explicit closures.
 
-    The chain is certified only if H1 has a branch-dependent high-trait mode,
-    equal fragmentation removes local support, the low H1 branch has lower
-    declared effective size than the high branch, and the supplied H2 map has a
-    strict expected genetic lead.  Rescue does not invalidate the theorem; it
-    identifies the stated mechanism by which the fragmentation chain is
-    interrupted in a recipient patch.
+    ``support_loss_selects_low_branch`` is deliberately an input rather than an
+    inferred result.  The H3 area threshold establishes loss of local support;
+    connecting that loss to a particular H1 branch requires a further ecological
+    closure.  The full chain is certified only when that closure is declared,
+    H1 has a branch-dependent high-trait mode, the low branch has lower declared
+    effective size, and the supplied H2 map has a strict expected genetic lead.
     """
     if tolerance < 0.0:
         raise ValueError("tolerance must be non-negative")
@@ -111,12 +114,14 @@ def coupled_eco_genetic_certificate(
     chain = (
         h1_ok
         and h3_fragmentation.fragmentation_removes_local_support_certified
+        and bool(support_loss_selects_low_branch)
         and lower_ne
         and h2_low_branch.strict_expected_genetic_lead_certified
     )
     return CoupledEcoGeneticCertificate(
         h1_branch_switch_certified=h1_ok,
         h3_fragmentation_removes_support_certified=h3_fragmentation.fragmentation_removes_local_support_certified,
+        support_loss_selects_low_branch_declared=bool(support_loss_selects_low_branch),
         low_branch_effective_population_size=low_ne,
         high_branch_effective_population_size=high_ne,
         lower_effective_size_on_low_branch_certified=lower_ne,
