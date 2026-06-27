@@ -108,8 +108,12 @@ A theorem for a specified system must establish:
 2. high-trait margin sign change across stable branches;
 3. absence/presence of the potential trait component across them.
 
-The logistic feedback system is a canonical corollary, not a proof for every
-positive-feedback system.
+For the explicit one-state logistic reduction, the repository now supplies a
+Type T canonical certificate: `K=kappa*A/A_ref>4` and an exact open barrier
+interval give three fixed points (stable-low, unstable-middle, stable-high).
+Combining that branch result with `m_H(q_L)<0<m_H(q_H)` certifies H1 for that
+specified map. See `docs/canonical_h1_bifurcation.md`. This does not prove H1
+for arbitrary positive-feedback systems or for the full coupled simulator.
 
 The dynamic experiment sweeps patch size, barrier, feedback strength, and trait
 cost/benefit parameters. It distinguishes no transition, smooth transition,
