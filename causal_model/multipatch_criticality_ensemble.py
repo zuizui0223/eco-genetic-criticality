@@ -1,15 +1,19 @@
 """Ensemble summaries for the finite multi-patch criticality simulator.
 
 Theorems L1/L2 concern expected diversity paths. A single simulator run is a
-realised stochastic path. This module keeps those levels separate by summarising
-replicated runs, including lead probability and mean census-weighted H_alpha.
+realised stochastic path. This module keeps those levels separate and reports
+both the conditional lead probability among valid event pairs and the
+unconditional observed-lead fraction across all replicates.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from statistics import median
 from typing import Sequence
 
+from causal_model.first_passage_reporting import (
+    FirstPassageComparison,
+    compare_first_passage_times,
+)
 from causal_model.multipatch_criticality_dynamics import (
     DynamicsParameters,
     SimulationResult,
@@ -21,7 +25,7 @@ from causal_model.multipatch_criticality_dynamics import (
 
 @dataclass(frozen=True)
 class EnsembleSummary:
-    """Replicate-level and mean-path summaries with predeclared first passages."""
+    """Replicate-level and mean-path summaries with explicit censoring denominators."""
 
     replicates: int
     warning_threshold: float
@@ -29,9 +33,46 @@ class EnsembleSummary:
     mean_h_gamma: tuple[float, ...]
     trait_absence_times: tuple[int | None, ...]
     alpha_warning_times: tuple[int | None, ...]
-    genetic_lead_probability: float
-    lead_time_differences: tuple[int, ...]
-    median_lead_time_difference: float | None
+    alpha_warning_vs_trait_absence: FirstPassageComparison
+
+    @property
+    def valid_event_pair_count(self) -> int:
+        """Number of replicates where both alpha warning and trait loss occurred."""
+        return self.alpha_warning_vs_trait_absence.valid_pair_count
+
+    @property
+    def event_pair_observability(self) -> float:
+        """Fraction of all replicates that support the ordered-event comparison."""
+        return self.alpha_warning_vs_trait_absence.valid_pair_probability
+
+    @property
+    def conditional_genetic_lead_probability(self) -> float | None:
+        """P(warning precedes trait loss | both events observed)."""
+        return self.alpha_warning_vs_trait_absence.conditional_lead_probability
+
+    @property
+    def unconditional_observed_lead_fraction(self) -> float:
+        """P(observed warning lead) across every replicate, including censored runs."""
+        return self.alpha_warning_vs_trait_absence.unconditional_observed_lead_fraction
+
+    @property
+    def genetic_lead_probability(self) -> float:
+        """Backward-compatible alias for the unconditional observed-lead fraction.
+
+        Use ``conditional_genetic_lead_probability`` for the estimate conditional
+        on valid event pairs.  The older unqualified name had an ambiguous
+        denominator and is retained only to avoid breaking callers.
+        """
+        return self.unconditional_observed_lead_fraction
+
+    @property
+    def lead_time_differences(self) -> tuple[int, ...]:
+        """Warning-minus-trait times among valid event pairs only."""
+        return self.alpha_warning_vs_trait_absence.time_differences
+
+    @property
+    def median_lead_time_difference(self) -> float | None:
+        return self.alpha_warning_vs_trait_absence.median_time_difference
 
 
 def simulate_ensemble(
@@ -40,11 +81,12 @@ def simulate_ensemble(
     replicates: int,
     warning_threshold: float,
 ) -> tuple[tuple[SimulationResult, ...], EnsembleSummary]:
-    """Run seed-indexed replicates and report the correct stochastic lag summaries.
+    """Run seed-indexed replicates with a censoring-aware stochastic lag summary.
 
-    A lead in replicate r is defined only when both first-passage times exist and
-    `tau_H^(r) < tau_trait^(r)`. Runs where either event is absent remain in the
-    reported first-passage vectors but are not silently counted as leads.
+    A lead in replicate ``r`` is defined only when both first-passage times exist
+    and ``tau_H^(r) < tau_trait^(r)``.  The returned comparison exposes the
+    valid-pair denominator, conditional lead probability, and all-replicate
+    observed-lead fraction separately.
     """
     if replicates < 1:
         raise ValueError("replicates must be at least one")
@@ -66,12 +108,7 @@ def simulate_ensemble(
     )
     trait_times = tuple(first_high_trait_absence(result) for result in results)
     warning_times = tuple(first_alpha_warning(result, warning_threshold) for result in results)
-    differences = tuple(
-        warning - trait
-        for warning, trait in zip(warning_times, trait_times)
-        if warning is not None and trait is not None
-    )
-    lead_count = sum(value < 0 for value in differences)
+    comparison = compare_first_passage_times(warning_times, trait_times)
     return results, EnsembleSummary(
         replicates=replicates,
         warning_threshold=warning_threshold,
@@ -79,9 +116,7 @@ def simulate_ensemble(
         mean_h_gamma=mean_gamma,
         trait_absence_times=trait_times,
         alpha_warning_times=warning_times,
-        genetic_lead_probability=lead_count / replicates,
-        lead_time_differences=differences,
-        median_lead_time_difference=None if not differences else median(differences),
+        alpha_warning_vs_trait_absence=comparison,
     )
 
 
