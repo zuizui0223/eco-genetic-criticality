@@ -30,21 +30,27 @@ def _h2_lead():
     )
 
 
+def _fragmentation():
+    return canonical_h3_fragmentation_certificate(
+        total_area=100.0,
+        patch_count=4,
+        local_support_threshold=30.0,
+    )
+
+
 def test_chain_certifies_only_when_each_declared_link_is_present():
     certificate = coupled_eco_genetic_certificate(
         h1=_h1(),
         h2_low_branch=_h2_lead(),
-        h3_fragmentation=canonical_h3_fragmentation_certificate(
-            total_area=100.0,
-            patch_count=4,
-            local_support_threshold=30.0,
-        ),
+        h3_fragmentation=_fragmentation(),
+        support_loss_selects_low_branch=True,
         baseline_effective_population_size=2.0,
         interaction_slope=10.0,
     )
 
     assert certificate.h1_branch_switch_certified
     assert certificate.h3_fragmentation_removes_support_certified
+    assert certificate.support_loss_selects_low_branch_declared
     assert certificate.lower_effective_size_on_low_branch_certified
     assert certificate.h2_expected_genetic_lead_certified
     assert certificate.fragmentation_to_genetic_warning_chain_certified
@@ -55,11 +61,8 @@ def test_chain_fails_without_a_positive_interaction_effective_size_link():
     certificate = coupled_eco_genetic_certificate(
         h1=_h1(),
         h2_low_branch=_h2_lead(),
-        h3_fragmentation=canonical_h3_fragmentation_certificate(
-            total_area=100.0,
-            patch_count=4,
-            local_support_threshold=30.0,
-        ),
+        h3_fragmentation=_fragmentation(),
+        support_loss_selects_low_branch=True,
         baseline_effective_population_size=2.0,
         interaction_slope=0.0,
     )
@@ -68,15 +71,27 @@ def test_chain_fails_without_a_positive_interaction_effective_size_link():
     assert not certificate.fragmentation_to_genetic_warning_chain_certified
 
 
+def test_chain_fails_when_support_loss_is_not_explicitly_linked_to_low_branch():
+    certificate = coupled_eco_genetic_certificate(
+        h1=_h1(),
+        h2_low_branch=_h2_lead(),
+        h3_fragmentation=_fragmentation(),
+        support_loss_selects_low_branch=False,
+        baseline_effective_population_size=2.0,
+        interaction_slope=10.0,
+    )
+
+    assert certificate.h3_fragmentation_removes_support_certified
+    assert not certificate.support_loss_selects_low_branch_declared
+    assert not certificate.fragmentation_to_genetic_warning_chain_certified
+
+
 def test_external_rescue_marks_the_mechanism_that_interrupts_the_chain():
     certificate = coupled_eco_genetic_certificate(
         h1=_h1(),
         h2_low_branch=_h2_lead(),
-        h3_fragmentation=canonical_h3_fragmentation_certificate(
-            total_area=100.0,
-            patch_count=4,
-            local_support_threshold=30.0,
-        ),
+        h3_fragmentation=_fragmentation(),
+        support_loss_selects_low_branch=True,
         baseline_effective_population_size=2.0,
         interaction_slope=10.0,
         h3_rescue=canonical_h3_rescue_certificate(
