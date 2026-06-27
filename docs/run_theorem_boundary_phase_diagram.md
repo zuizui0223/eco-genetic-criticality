@@ -37,6 +37,18 @@ python scripts/run_theorem_boundary_phase_diagram.py \
   --output-dir artifacts/theorem_boundary/pilot
 ```
 
+## Manual GitHub Actions run
+
+The **Theorem-Boundary Phase Diagram** workflow can be started from the
+repository's Actions tab.  Select a profile, one landscape or `all`, and an
+explicit master seed.  The workflow uploads the CSV, JSON, and manifest as one
+named artifact, so no local Python installation is required for a standard
+run.
+
+The `full` profile is intentionally guarded: its `allow_full_profile` input
+must be selected explicitly.  This avoids accidentally consuming a long GitHub
+Actions job for an exploratory run.
+
 ## Final figures
 
 ```bash
