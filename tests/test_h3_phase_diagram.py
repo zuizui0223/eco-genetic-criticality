@@ -15,6 +15,7 @@ from causal_model.h3_phase_diagram import (
     standard_h3_landscapes,
     write_h3_phase_diagram_artifacts,
 )
+from causal_model.network_h3_lifecycle import PatchState
 
 
 def _spec(**overrides):
@@ -48,16 +49,18 @@ def test_presets_keep_total_capacity_matched_and_distinguish_connectivity():
     assert connected.kernel[0][1:] == pytest.approx((1 / 3, 1 / 3, 1 / 3))
 
 
-def test_initial_states_have_matched_composition_proportional_to_capacity():
+def test_initial_states_preserve_exact_global_population_trait_and_allele_totals():
     spec = _spec()
-    large, isolated, _ = standard_h3_landscapes(spec)
-    large_state = initial_states_for_preset(large, spec)
+    large, isolated, connected = standard_h3_landscapes(spec)
+    large_states = initial_states_for_preset(large, spec)
     isolated_states = initial_states_for_preset(isolated, spec)
+    connected_states = initial_states_for_preset(connected, spec)
 
-    assert large_state == (type(large_state[0])(20, 10, 20),)
-    assert sum(state.population for state in isolated_states) == 20
-    assert sum(state.high_trait_abundance for state in isolated_states) == 8
-    assert sum(state.high_allele_copies for state in isolated_states) == 16
+    assert large_states == (PatchState(20, 10, 20),)
+    for states in (large_states, isolated_states, connected_states):
+        assert sum(state.population for state in states) == 20
+        assert sum(state.high_trait_abundance for state in states) == 10
+        assert sum(state.high_allele_copies for state in states) == 20
 
 
 def test_phase_diagram_has_all_landscape_and_grid_cells_with_visible_denominators():
