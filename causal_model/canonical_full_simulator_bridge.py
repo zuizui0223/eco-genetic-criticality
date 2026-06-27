@@ -14,7 +14,7 @@ alter q in this declared limit.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import ceil, isfinite
+from math import isfinite
 
 from causal_model.canonical_h1_bifurcation import iterate_canonical_map
 from causal_model.multipatch_criticality_dynamics import DynamicsParameters, simulate
