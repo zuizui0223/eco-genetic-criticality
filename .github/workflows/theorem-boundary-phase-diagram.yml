@@ -1,0 +1,74 @@
+name: Theorem-Boundary Phase Diagram
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Experiment profile"
+        type: choice
+        required: true
+        default: standard
+        options:
+          - quick
+          - standard
+          - full
+      scenario:
+        description: "Landscape scenario"
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - one_large
+          - equal_isolated
+          - equal_migrating
+      master_seed:
+        description: "Master random seed"
+        type: string
+        required: true
+        default: "20260627"
+      allow_full_profile:
+        description: "I explicitly approve the expensive full profile"
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Guard full profile
+        if: ${{ inputs.profile == 'full' && !inputs.allow_full_profile }}
+        run: |
+          echo "The full profile requires allow_full_profile=true." >&2
+          exit 2
+      - name: Run theorem-boundary phase diagram
+        shell: bash
+        env:
+          PROFILE: ${{ inputs.profile }}
+          SCENARIO: ${{ inputs.scenario }}
+          MASTER_SEED: ${{ inputs.master_seed }}
+        run: |
+          set -euo pipefail
+          OUTDIR="artifacts/theorem_boundary/${PROFILE}-${SCENARIO}-seed-${MASTER_SEED}"
+          ARGS=(--profile "$PROFILE" --master-seed "$MASTER_SEED" --output-dir "$OUTDIR")
+          if [[ "$SCENARIO" != "all" ]]; then
+            ARGS+=(--scenario "$SCENARIO")
+          fi
+          python scripts/run_theorem_boundary_phase_diagram.py "${ARGS[@]}"
+      - name: Upload phase-diagram artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: theorem-boundary-${{ inputs.profile }}-${{ inputs.scenario }}-seed-${{ inputs.master_seed }}
+          path: artifacts/theorem_boundary/
+          if-no-files-found: error
+          retention-days: 90
