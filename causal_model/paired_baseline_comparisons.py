@@ -3,8 +3,8 @@
 These are *mechanistic ablations*, not claims to reproduce every external
 trait-only or population-genetic model.  All variants retain the declared finite
 life cycle, landscapes, initial state, and random seed.  They differ only in the
-channels allowed to support interaction q and in whether allele state enters
-trait recruitment.
+channels allowed to support interaction q, whether allele state enters trait
+recruitment, and whether allele frequency directly supports population growth.
 
 For a full support signal
     alpha * q + beta * x_high + gamma * p,
@@ -14,7 +14,8 @@ interaction q.  Thus trait-only uses
 and genetic-only uses
     (alpha + beta) * q + gamma * p.
 This prevents a simple loss of total input amplitude from masquerading as a
-mechanistic ablation effect.
+mechanistic ablation effect.  Trait-only also sets ``high_allele_growth=0`` so
+p cannot reach q indirectly through population size and density.
 """
 from __future__ import annotations
 
@@ -22,7 +23,6 @@ import csv
 import json
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
-from statistics import median
 from typing import Iterable, Mapping, Sequence
 
 from causal_model.multipatch_criticality_dynamics import DynamicsParameters, simulate
@@ -58,9 +58,10 @@ class BaselineDefinition:
     label: str
     interaction_support: str
     genotype_trait_recruitment: str
+    high_allele_growth: float
     interpretation: str
 
-    def as_dict(self) -> dict[str, str]:
+    def as_dict(self) -> dict[str, object]:
         return asdict(self)
 
 
@@ -155,7 +156,11 @@ def baseline_definition(parameters: DynamicsParameters, baseline_id: str) -> Bas
             label="Trait-only feedback ablation",
             interaction_support=f"({alpha + gamma:g})*q + ({beta:g})*x_high",
             genotype_trait_recruitment="resident_trait_only",
-            interpretation="Allele state is retained as an observed drifting/selected state but cannot enter q or recruit trait bins.",
+            high_allele_growth=0.0,
+            interpretation=(
+                "Allele state is retained as an observed drifting/selected state but cannot enter q, "
+                "recruit trait bins, or change population growth."
+            ),
         )
     if baseline_id == BASELINE_GENETIC_ONLY:
         return BaselineDefinition(
@@ -163,7 +168,11 @@ def baseline_definition(parameters: DynamicsParameters, baseline_id: str) -> Bas
             label="Genetic-only feedback ablation",
             interaction_support=f"({alpha + beta:g})*q + ({gamma:g})*p",
             genotype_trait_recruitment="resident_trait_only",
-            interpretation="Trait occupancy remains an ecological response to q but cannot support q or receive allele-linked recruitment.",
+            high_allele_growth=parameters.high_allele_growth,
+            interpretation=(
+                "Trait occupancy remains an ecological response to q but cannot support q or receive "
+                "allele-linked recruitment."
+            ),
         )
     if baseline_id == BASELINE_FULL_ECO_GENETIC:
         return BaselineDefinition(
@@ -171,6 +180,7 @@ def baseline_definition(parameters: DynamicsParameters, baseline_id: str) -> Bas
             label="Full eco-genetic model",
             interaction_support=f"({alpha:g})*q + ({beta:g})*x_high + ({gamma:g})*p",
             genotype_trait_recruitment=parameters.genotype_trait_recruitment,
+            high_allele_growth=parameters.high_allele_growth,
             interpretation="Declared coupled feedback and genotype-linked trait recruitment are retained exactly.",
         )
     raise ValueError(f"unknown baseline_id: {baseline_id}")
@@ -186,6 +196,7 @@ def baseline_parameters(parameters: DynamicsParameters, baseline_id: str) -> Dyn
             q_feedback_beta_trait=beta,
             q_feedback_gamma_allele=0.0,
             genotype_trait_recruitment="resident_trait_only",
+            high_allele_growth=0.0,
         )
     if baseline_id == BASELINE_GENETIC_ONLY:
         return replace(
