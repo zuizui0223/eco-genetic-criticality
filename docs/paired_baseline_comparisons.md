@@ -14,13 +14,14 @@ S_t = \alpha q_t + \beta x_{H,t} + \gamma p_t,
 \]
 
 where \(q_t\) is interaction, \(x_{H,t}\) is realised high-trait mass, and
-\(p_t\) is high-allele frequency.
+\(p_t\) is high-allele frequency.  The simulator also has the declared
+allele-to-demography contribution `high_allele_growth * p_t`.
 
-| Variant | Interaction support | Trait recruitment |
-|---|---|---|
-| `trait_only` | \((\alpha+\gamma)q_t + \beta x_{H,t}\) | resident trait only |
-| `genetic_only` | \((\alpha+\beta)q_t + \gamma p_t\) | resident trait only |
-| `full_eco_genetic` | \(\alpha q_t + \beta x_{H,t} + \gamma p_t\) | declared full setting |
+| Variant | Interaction support | Trait recruitment | Allele demographic contribution |
+|---|---|---|---|
+| `trait_only` | \((\alpha+\gamma)q_t + \beta x_{H,t}\) | resident trait only | set to 0 |
+| `genetic_only` | \((\alpha+\beta)q_t + \gamma p_t\) | resident trait only | declared full setting |
+| `full_eco_genetic` | \(\alpha q_t + \beta x_{H,t} + \gamma p_t\) | declared full setting | declared full setting |
 
 The removed feedback weight is reassigned to current interaction \(q_t\), so
 all three variants retain the same total interaction-support weight.  This is
@@ -28,10 +29,11 @@ important: a contrast should not merely say that one model received less total
 support.
 
 In both ablations the allele state is still simulated.  For `trait_only` it is
-an observed drifting/selected state with no path into either interaction or
-trait recruitment.  For `genetic_only`, trait occupancy remains an ecological
-response to interaction, but it cannot support interaction or receive
-allele-linked recruitment.
+an observed drifting/selected state with no causal path into interaction, trait
+recruitment, or population growth; this also blocks the indirect
+\(p \rightarrow N \rightarrow\) density \(\rightarrow q\) path.  For
+`genetic_only`, trait occupancy remains an ecological response to interaction,
+but it cannot support interaction or receive allele-linked recruitment.
 
 ## Run a comparison
 
