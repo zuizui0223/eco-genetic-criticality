@@ -32,6 +32,8 @@ def test_ablation_replaces_removed_channel_with_interaction_memory():
     assert resolved_feedback_weights(genetic_only) == (0.9, 0.0, 0.1)
     assert trait_only.genotype_trait_recruitment == "resident_trait_only"
     assert genetic_only.genotype_trait_recruitment == "resident_trait_only"
+    assert trait_only.high_allele_growth == 0.0
+    assert genetic_only.high_allele_growth == parameters.high_allele_growth
     assert full == parameters
     assert sum(resolved_feedback_weights(full)) == pytest.approx(1.0)
     assert sum(resolved_feedback_weights(trait_only)) == pytest.approx(1.0)
@@ -55,6 +57,7 @@ def test_paired_comparison_shares_seed_and_records_full_model_contrasts():
     assert len(cells) == 1
     cell = cells[0]
     assert [definition.baseline_id for definition in cell.baseline_definitions] == list(BASELINE_IDS)
+    assert cell.baseline_definitions[0].high_allele_growth == 0.0
     assert len(cell.replicates) == 2
     for replicate in cell.replicates:
         assert tuple(replicate.outcomes) == BASELINE_IDS
@@ -86,6 +89,7 @@ def test_comparison_artifacts_and_cli_manifest_are_written(tmp_path):
     assert "models.full_eco_genetic.final_h_alpha_mean" in flat.columns
     assert "paired_contrasts.full_minus_genetic_only.final_h_alpha_difference_mean" in flat.columns
     assert records[0]["baseline_definitions"][0]["baseline_id"] == BASELINE_TRAIT_ONLY
+    assert records[0]["baseline_definitions"][0]["high_allele_growth"] == 0.0
 
     args = build_parser().parse_args(
         [
@@ -106,4 +110,5 @@ def test_comparison_artifacts_and_cli_manifest_are_written(tmp_path):
     _, _, manifest_path = run_from_namespace(args)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     assert manifest["baseline_ids"] == list(BASELINE_IDS)
+    assert manifest["baseline_definitions"][0]["high_allele_growth"] == 0.0
     assert manifest["shared_seed_rule"].startswith("Each baseline")
