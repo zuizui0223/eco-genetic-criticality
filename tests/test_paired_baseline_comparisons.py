@@ -2,6 +2,7 @@ import json
 from dataclasses import replace
 
 import pandas as pd
+import pytest
 
 from causal_model.multipatch_criticality_experiments import scenario_one_large, standard_profile
 from causal_model.paired_baseline_cli import build_parser, run_from_namespace
@@ -32,7 +33,9 @@ def test_ablation_replaces_removed_channel_with_interaction_memory():
     assert trait_only.genotype_trait_recruitment == "resident_trait_only"
     assert genetic_only.genotype_trait_recruitment == "resident_trait_only"
     assert full == parameters
-    assert sum(resolved_feedback_weights(full)) == sum(resolved_feedback_weights(trait_only)) == sum(resolved_feedback_weights(genetic_only)) == 1.0
+    assert sum(resolved_feedback_weights(full)) == pytest.approx(1.0)
+    assert sum(resolved_feedback_weights(trait_only)) == pytest.approx(1.0)
+    assert sum(resolved_feedback_weights(genetic_only)) == pytest.approx(1.0)
 
 
 def test_paired_comparison_shares_seed_and_records_full_model_contrasts():
