@@ -1,0 +1,132 @@
+name: Branch-Locked H1 H2 H3 Chain
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Experiment profile"
+        type: choice
+        required: true
+        default: standard
+        options:
+          - quick
+          - standard
+          - full
+      master_seeds:
+        description: "Comma-separated distinct master seeds"
+        type: string
+        required: true
+        default: "20260630,20260631,20260632,20260633,20260634"
+      h1_endpoint_padding_fraction:
+        description: "H1 calibration endpoint padding fraction"
+        type: string
+        required: true
+        default: "0.5"
+      h1_stage_generations:
+        description: "H1 calibration generations per barrier stage"
+        type: string
+        required: true
+        default: "30"
+      h1_nested_barrier_points:
+        description: "Comma-separated nested H1 barrier-grid point counts"
+        type: string
+        required: true
+        default: "25,49,97"
+      h1_maximum_normalized_bracket_width:
+        description: "Maximum finest H1 boundary-bracket width relative to canonical interval"
+        type: string
+        required: true
+        default: "0.03"
+      interaction_separation_threshold:
+        description: "Minimum terminal low/high interaction separation"
+        type: string
+        required: true
+        default: "0.05"
+      replicates:
+        description: "Optional override for replicates per pair and seed; leave blank for profile default"
+        type: string
+        required: false
+        default: ""
+      allow_full_profile:
+        description: "I explicitly approve the expensive full profile"
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Guard full profile
+        if: ${{ inputs.profile == 'full' && !inputs.allow_full_profile }}
+        run: |
+          echo "The full profile requires allow_full_profile=true." >&2
+          exit 2
+      - name: Run branch locked H1 H2 H3 chain
+        shell: bash
+        env:
+          PROFILE: ${{ inputs.profile }}
+          MASTER_SEEDS: ${{ inputs.master_seeds }}
+          H1_ENDPOINT_PADDING_FRACTION: ${{ inputs.h1_endpoint_padding_fraction }}
+          H1_STAGE_GENERATIONS: ${{ inputs.h1_stage_generations }}
+          H1_NESTED_BARRIER_POINTS: ${{ inputs.h1_nested_barrier_points }}
+          H1_MAXIMUM_NORMALIZED_BRACKET_WIDTH: ${{ inputs.h1_maximum_normalized_bracket_width }}
+          INTERACTION_SEPARATION_THRESHOLD: ${{ inputs.interaction_separation_threshold }}
+          REPLICATES: ${{ inputs.replicates }}
+        run: |
+          set -euo pipefail
+          SEED_TAG="$(printf '%s' "$MASTER_SEEDS" | tr ',' '_' | tr -cd '[:alnum:]_.-')"
+          GRID_TAG="$(printf '%s' "$H1_NESTED_BARRIER_POINTS" | tr ',' '_' | tr -cd '[:alnum:]_.-')"
+          if [[ -z "$SEED_TAG" || -z "$GRID_TAG" ]]; then
+            echo "master_seeds and h1_nested_barrier_points cannot be empty." >&2
+            exit 2
+          fi
+          OUTDIR="artifacts/branch_locked_h1_h2_h3/${PROFILE}-seeds-${SEED_TAG}-grids-${GRID_TAG}"
+          ARGS=(
+            --profile "$PROFILE"
+            --output-dir "$OUTDIR"
+            --prefix run
+            --h1-endpoint-padding-fraction "$H1_ENDPOINT_PADDING_FRACTION"
+            --h1-stage-generations "$H1_STAGE_GENERATIONS"
+            --h1-maximum-normalized-bracket-width "$H1_MAXIMUM_NORMALIZED_BRACKET_WIDTH"
+            --interaction-separation-threshold "$INTERACTION_SEPARATION_THRESHOLD"
+          )
+          IFS=',' read -r -a SEEDS <<< "$MASTER_SEEDS"
+          for RAW_SEED in "${SEEDS[@]}"; do
+            SEED="$(printf '%s' "$RAW_SEED" | xargs)"
+            if [[ -z "$SEED" ]]; then
+              echo "master_seeds contains an empty value." >&2
+              exit 2
+            fi
+            ARGS+=(--master-seed "$SEED")
+          done
+          IFS=',' read -r -a GRIDS <<< "$H1_NESTED_BARRIER_POINTS"
+          for RAW_GRID in "${GRIDS[@]}"; do
+            GRID="$(printf '%s' "$RAW_GRID" | xargs)"
+            if [[ -z "$GRID" ]]; then
+              echo "h1_nested_barrier_points contains an empty value." >&2
+              exit 2
+            fi
+            ARGS+=(--h1-barrier-points "$GRID")
+          done
+          if [[ -n "$REPLICATES" ]]; then
+            ARGS+=(--replicates "$REPLICATES")
+          fi
+          python scripts/run_branch_locked_h1_h2_h3_chain.py "${ARGS[@]}"
+      - name: Upload branch locked H1 H2 H3 artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: branch-locked-h1-h2-h3-${{ inputs.profile }}-seeds-${{ inputs.master_seeds }}-grids-${{ inputs.h1_nested_barrier_points }}
+          path: artifacts/branch_locked_h1_h2_h3/
+          if-no-files-found: warn
+          retention-days: 90
