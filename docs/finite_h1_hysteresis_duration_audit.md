@@ -95,6 +95,26 @@ python scripts/run_finite_h1_hysteresis_duration_audit.py \
   --prefix standard_duration_v1
 ```
 
+### GitHub Actions run
+
+The **H1 Hysteresis Duration Robustness** workflow is manual
+(`workflow_dispatch`). Use it for the primary duration robustness run so the
+source revision, ladder, thresholds, manifest, and raw outputs are retained
+together.
+
+1. Open **Actions** and choose **H1 Hysteresis Duration Robustness**.
+2. Select `standard` for the first scientific run; `quick` is only for checking
+   runner installation and artifact shape.
+3. Keep `stage_generations` as `5,10,30,80`, `barrier_points` as `7`, and
+   `gap_stability_tolerance` as `0.05` for the predeclared first ladder.
+4. Use master seed `20260629` to make this audit directly comparable with the
+   first H1-targeted validation campaign. Leave replicates blank to use the
+   standard profile's declared count.
+5. Use `full` only after setting the separate full-profile approval input.
+
+The workflow stores the complete CSV, JSON, and manifest for 90 days. It also
+uploads partial artifacts on failure, so a stopped run remains inspectable.
+
 The JSON retains all duration-specific finite continuation records. The CSV is
 a compact pair-level index. The manifest freezes the duration ladder, thresholds,
 seed, source revision, and no-selection rule.
