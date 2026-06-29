@@ -72,6 +72,28 @@ launches one finite H1--H3 validation subcampaign for every
 `(area_reference, interaction_feedback)` pair, with every declared inside
 position.
 
+### GitHub Actions run
+
+The **H1-Targeted Finite Validation** workflow is manual (`workflow_dispatch`).
+Use it for a run whose artifacts need to be retained with its exact code
+revision:
+
+1. Open **Actions** and choose **H1-Targeted Finite Validation**.
+2. Use `quick` only as an end-to-end smoke check. Use `standard` for the first
+   primary finite validation run.
+3. Leave inside positions as `0.25,0.5,0.75` for the predeclared three-point
+   within-interval design, unless a narrower sensitivity run is explicitly
+   declared.
+4. Record the master seed in the analysis log; the default is `20260629`.
+5. Leave replicate and generation overrides blank to use the named profile, or
+   set both deliberately and treat that run as a separately declared design.
+6. Select `full` only after explicitly enabling the full-profile approval
+   switch. It has a longer timeout because it evaluates many more finite runs.
+
+The workflow uploads every manifest, design map, ledger, and subcampaign raw
+artifact for 90 days. It also attempts to upload partial outputs on failure, so
+an interrupted run is inspectable rather than silently discarded.
+
 ## Outputs
 
 At the top level, the runner writes:
