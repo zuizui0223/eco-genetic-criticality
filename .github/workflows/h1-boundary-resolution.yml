@@ -1,0 +1,116 @@
+name: H1 Boundary Resolution
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Experiment profile"
+        type: choice
+        required: true
+        default: standard
+        options:
+          - quick
+          - standard
+          - full
+      endpoint_padding_fraction:
+        description: "Shared endpoint padding fraction of canonical interval width"
+        type: string
+        required: true
+        default: "0.5"
+      stage_generations:
+        description: "Generations per continuation barrier stage"
+        type: string
+        required: true
+        default: "30"
+      nested_barrier_points:
+        description: "Comma-separated nested barrier-grid point counts"
+        type: string
+        required: true
+        default: "25,49,97"
+      maximum_normalized_bracket_width:
+        description: "Maximum finest-grid boundary-bracket width as a fraction of canonical interval width"
+        type: string
+        required: true
+        default: "0.03"
+      master_seed:
+        description: "Base master random seed; use a new seed for confirmation"
+        type: string
+        required: true
+        default: "20260630"
+      replicates:
+        description: "Optional override for replicates per H1 pair; leave blank to use profile default"
+        type: string
+        required: false
+        default: ""
+      allow_full_profile:
+        description: "I explicitly approve the expensive full profile"
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Guard full profile
+        if: ${{ inputs.profile == 'full' && !inputs.allow_full_profile }}
+        run: |
+          echo "The full profile requires allow_full_profile=true." >&2
+          exit 2
+      - name: Run nested-grid finite H1 boundary resolution
+        shell: bash
+        env:
+          PROFILE: ${{ inputs.profile }}
+          ENDPOINT_PADDING_FRACTION: ${{ inputs.endpoint_padding_fraction }}
+          STAGE_GENERATIONS: ${{ inputs.stage_generations }}
+          NESTED_BARRIER_POINTS: ${{ inputs.nested_barrier_points }}
+          MAXIMUM_NORMALIZED_BRACKET_WIDTH: ${{ inputs.maximum_normalized_bracket_width }}
+          MASTER_SEED: ${{ inputs.master_seed }}
+          REPLICATES: ${{ inputs.replicates }}
+        run: |
+          set -euo pipefail
+          GRID_TAG="$(printf '%s' "$NESTED_BARRIER_POINTS" | tr ',' '_' | tr -cd '[:alnum:]_.-')"
+          if [[ -z "$GRID_TAG" ]]; then
+            echo "nested_barrier_points cannot be empty." >&2
+            exit 2
+          fi
+          OUTDIR="artifacts/h1_boundary_resolution/${PROFILE}-padding-${ENDPOINT_PADDING_FRACTION}-grids-${GRID_TAG}-seed-${MASTER_SEED}"
+          ARGS=(
+            --profile "$PROFILE"
+            --master-seed "$MASTER_SEED"
+            --output-dir "$OUTDIR"
+            --prefix run
+            --endpoint-padding-fraction "$ENDPOINT_PADDING_FRACTION"
+            --stage-generations "$STAGE_GENERATIONS"
+            --maximum-normalized-bracket-width "$MAXIMUM_NORMALIZED_BRACKET_WIDTH"
+          )
+          IFS=',' read -r -a GRIDS <<< "$NESTED_BARRIER_POINTS"
+          for RAW_GRID in "${GRIDS[@]}"; do
+            GRID="$(printf '%s' "$RAW_GRID" | xargs)"
+            if [[ -z "$GRID" ]]; then
+              echo "nested_barrier_points contains an empty value." >&2
+              exit 2
+            fi
+            ARGS+=(--barrier-points "$GRID")
+          done
+          if [[ -n "$REPLICATES" ]]; then
+            ARGS+=(--replicates "$REPLICATES")
+          fi
+          python scripts/run_finite_h1_boundary_resolution_audit.py "${ARGS[@]}"
+      - name: Upload H1 boundary-resolution artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: h1-boundary-resolution-${{ inputs.profile }}-padding-${{ inputs.endpoint_padding_fraction }}-grids-${{ inputs.nested_barrier_points }}-seed-${{ inputs.master_seed }}
+          path: artifacts/h1_boundary_resolution/
+          if-no-files-found: warn
+          retention-days: 90
