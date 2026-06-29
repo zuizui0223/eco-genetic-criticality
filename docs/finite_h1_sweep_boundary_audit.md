@@ -103,6 +103,26 @@ python scripts/run_finite_h1_sweep_boundary_audit.py \
   --prefix standard_sweep_v1
 ```
 
+### GitHub Actions run
+
+The **H1 Finite Sweep Boundaries** workflow is manual (`workflow_dispatch`).
+Use it for the first boundary-localization study so the full design, code
+revision, seed, threshold defaults, and raw output remain together as one
+artifact-backed record.
+
+1. Open **Actions** and select **H1 Finite Sweep Boundaries**.
+2. Use `standard` for the first scientific run; `quick` only verifies runner
+   installation and artifact shape.
+3. Keep endpoint padding as `0.1,0.5,1.0,2.0`, stage duration as `30`, and
+   grid resolution as `25` for the predeclared initial endpoint design.
+4. Use master seed `20260629`; leave replicates blank to retain the standard
+   profile's declared count and direct comparability with the duration ladder.
+5. Use `full` only after explicitly enabling the full-profile approval input.
+
+The workflow uploads CSV, JSON, and manifest for 90 days, and also uploads
+partial output on failure. Every padding fraction remains in the artifact even
+if no finite threshold-defined loop is detected.
+
 The CSV is a compact pair-level index. JSON preserves every endpoint sweep and
 finite trajectory, including unavailable cells and sweeps with no detected
 boundary. The manifest freezes thresholds, stage duration, range ladder, grid
