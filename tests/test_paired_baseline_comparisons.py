@@ -27,9 +27,9 @@ def test_ablation_replaces_removed_channel_with_interaction_memory():
     genetic_only = baseline_parameters(parameters, BASELINE_GENETIC_ONLY)
     full = baseline_parameters(parameters, BASELINE_FULL_ECO_GENETIC)
 
-    assert resolved_feedback_weights(full) == (0.6, 0.3, 0.1)
-    assert resolved_feedback_weights(trait_only) == (0.7, 0.3, 0.0)
-    assert resolved_feedback_weights(genetic_only) == (0.9, 0.0, 0.1)
+    assert resolved_feedback_weights(full) == pytest.approx((0.6, 0.3, 0.1))
+    assert resolved_feedback_weights(trait_only) == pytest.approx((0.7, 0.3, 0.0))
+    assert resolved_feedback_weights(genetic_only) == pytest.approx((0.9, 0.0, 0.1))
     assert trait_only.genotype_trait_recruitment == "resident_trait_only"
     assert genetic_only.genotype_trait_recruitment == "resident_trait_only"
     assert trait_only.high_allele_growth == 0.0
