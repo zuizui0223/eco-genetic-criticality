@@ -58,10 +58,10 @@ python scripts/run_paired_baseline_comparisons.py \
 
 The runner writes:
 
-- a flat CSV with per-cell model summaries and paired contrasts;
-- a full JSON with every matched replicate outcome; and
-- a manifest with the baseline equations, profile, scenario set, seed rule, and
-  output names.
+- a flat CSV with per-cell model summaries, paired contrasts, and scope metrics;
+- a full JSON with every matched replicate outcome and H1 theorem-boundary audit;
+- and a manifest with the baseline equations, profile, scenario set, seed rule,
+  and output names.
 
 ## Reading the paired contrasts
 
@@ -79,6 +79,26 @@ are descriptive fractions across matched replicates.  They are not p-values.
 The Hα genetic-lead field remains conditional on uncensored event pairs.  A
 missing conditional probability means no valid pair, not evidence that genetic
 lead has probability zero.
+
+## H1 theorem-boundary audit
+
+Each baseline is separately compared with the canonical H1 update at every
+simulated transition.  The JSON replicate record stores the audit under
+`h1_theorem_boundaries.<baseline_id>`.  The flat CSV reports each baseline's:
+
+- probability that every patchwise update matches the canonical update within
+  numerical tolerance;
+- probability of the stronger single-patch, no-migration theorem limit;
+- maximum and mean canonical-update residuals;
+- density and support deviations; and
+- frequencies of named departures: density variation, trait feedback, allele
+  feedback, non-interaction support, migration, and multiple patches.
+
+A difference between `full_eco_genetic` and an ablation is therefore still a
+within-simulator causal contrast.  It becomes a canonical-H1 theorem result
+only in rows where the relevant baseline's theorem-limit flag is one.  In all
+other rows, use the audit to say exactly which declared mechanisms make the
+comparison a robustness result instead.
 
 ## Scope
 
