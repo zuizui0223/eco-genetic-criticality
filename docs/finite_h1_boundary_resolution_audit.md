@@ -79,9 +79,9 @@ first-crossing grid points.
 
 ## Resolution-stability predicate
 
-A replicate is labelled `resolution_stable_loop_supported=True` only when both
-two finest grids show a bracket-supported loop, all of the following hold, and
-the finite closure already satisfies the standard trait-switch mechanism:
+A replicate is labelled `resolution_stable_loop_supported=True` only when the
+two finest grids both show a bracket-supported loop and all of the following
+geometric conditions hold:
 
 1. the collapse-bracket midpoint moves by no more than one penultimate-grid
    step;
@@ -90,10 +90,9 @@ the finite closure already satisfies the standard trait-switch mechanism:
 3. the widest finest-grid boundary bracket is at most `0.03` of canonical
    interval width.
 
-The corresponding stronger predicate
-`resolution_stable_h1_loop_mechanism_supported=True` keeps the same geometric
-requirements and explicitly requires finite potential high-trait switch support
-on both finest grids.
+The stronger predicate
+`resolution_stable_h1_loop_mechanism_supported=True` adds finite potential
+high-trait switch support on both finest grids.
 
 These are predeclared operational Type S checks. They demonstrate grid-resolution
 robustness for a particular finite closure; they do not prove an exact finite
