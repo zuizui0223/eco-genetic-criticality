@@ -74,6 +74,27 @@ python scripts/run_branch_locked_h1_h2_h3_chain.py \
   --prefix standard_branch_locked_v1
 ```
 
+## GitHub Actions
+
+The **Branch-Locked H1 H2 H3 Chain** workflow is manual (`workflow_dispatch`).
+For the initial run, use the standard defaults:
+
+```text
+profile: standard
+master_seeds: 20260630,20260631,20260632,20260633,20260634
+h1_endpoint_padding_fraction: 0.5
+h1_stage_generations: 30
+h1_nested_barrier_points: 25,49,97
+h1_maximum_normalized_bracket_width: 0.03
+interaction_separation_threshold: 0.05
+replicates: blank
+allow_full_profile: false
+```
+
+It uploads CSV, JSON, and manifest files for 90 days, including partial output
+on failure. The run retains every H1 calibration record, H2 censored pair, and
+H3 comparison; outcomes do not control inclusion.
+
 CSV is a pair-level ledger. JSON retains every calibration, anchor, branch
 outcome, H2 comparison, H3 contrast, migration-mixing contrast, and chain
 predicate. The manifest freezes the seed ensemble and the no-selection policy.
