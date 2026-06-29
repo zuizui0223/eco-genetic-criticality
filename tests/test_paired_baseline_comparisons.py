@@ -61,10 +61,16 @@ def test_paired_comparison_shares_seed_and_records_full_model_contrasts():
     assert len(cell.replicates) == 2
     for replicate in cell.replicates:
         assert tuple(replicate.outcomes) == BASELINE_IDS
+        assert tuple(replicate.h1_theorem_boundaries) == BASELINE_IDS
         assert all(outcome.seed == replicate.seed for outcome in replicate.outcomes.values())
     contrast = cell.summary["paired_contrasts"]["full_minus_trait_only"]
     assert contrast["replicate_count"] == 2
     assert "final_h_alpha_difference_mean" in contrast
+    scope = cell.summary["scope"]
+    assert scope[BASELINE_TRAIT_ONLY]["departure_probabilities"]["allele_feedback_enabled"] == 0.0
+    assert scope[BASELINE_GENETIC_ONLY]["departure_probabilities"]["trait_feedback_enabled"] == 0.0
+    assert scope[BASELINE_FULL_ECO_GENETIC]["departure_probabilities"]["trait_feedback_enabled"] == 1.0
+    assert scope[BASELINE_FULL_ECO_GENETIC]["departure_probabilities"]["allele_feedback_enabled"] == 1.0
     assert baseline_definition(spec.base_parameters, BASELINE_FULL_ECO_GENETIC).baseline_id == BASELINE_FULL_ECO_GENETIC
 
 
@@ -88,8 +94,10 @@ def test_comparison_artifacts_and_cli_manifest_are_written(tmp_path):
     records = json.loads(json_path.read_text(encoding="utf-8"))
     assert "models.full_eco_genetic.final_h_alpha_mean" in flat.columns
     assert "paired_contrasts.full_minus_genetic_only.final_h_alpha_difference_mean" in flat.columns
+    assert "scope.full_eco_genetic.departure_probabilities.trait_feedback_enabled" in flat.columns
     assert records[0]["baseline_definitions"][0]["baseline_id"] == BASELINE_TRAIT_ONLY
     assert records[0]["baseline_definitions"][0]["high_allele_growth"] == 0.0
+    assert records[0]["replicates"][0]["h1_theorem_boundaries"][BASELINE_FULL_ECO_GENETIC]["interaction_trait_feedback_enabled"]
 
     args = build_parser().parse_args(
         [
