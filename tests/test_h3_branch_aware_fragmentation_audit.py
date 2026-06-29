@@ -26,7 +26,9 @@ def _spec(**overrides):
         master_seed=53,
         area_reference_values=(1.0,),
         interaction_feedback_values=(8.0,),
-        interaction_barrier_values=(0.5,),
+        # For one_large, local area is 4 and K=32.  theta=1.0 lies strictly
+        # inside its canonical bistable interval (about 0.554 to 3.446).
+        interaction_barrier_values=(1.0,),
         migration_rate=0.2,
     )
     values.update(overrides)
