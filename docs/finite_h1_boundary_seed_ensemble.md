@@ -94,7 +94,25 @@ python scripts/run_finite_h1_boundary_seed_ensemble.py \
   --prefix standard_seed_ensemble_v1
 ```
 
-The JSON contains the complete raw continuation output for each master seed.
+### GitHub Actions run
+
+The **H1 Boundary Seed Ensemble** workflow is manual (`workflow_dispatch`). It
+runs the full seed ensemble without requiring a local Python environment and
+uploads CSV, JSON, and manifest artifacts for 90 days.
+
+1. Open **Actions** and select **H1 Boundary Seed Ensemble**.
+2. Keep the standard defaults for the first run: seeds
+   `20260630,20260631,20260632,20260633,20260634`, endpoint padding `0.5`,
+   stage generations `30`, nested grids `25,49,97`, and maximum bracket width
+   `0.03`.
+3. Leave `replicates` empty to preserve the standard profile's 20 replicates
+   per pair and seed. Keep `allow_full_profile` unchecked.
+4. Click **Run workflow**.
+
+The standard run contains 5 master seeds × 9 parameter pairs × 20 replicates ×
+3 nested grids. Every seed-specific raw continuation remains in the JSON, so a
+high pooled average cannot conceal a failed seed run.
+
 The CSV is an aligned pair-level ledger with pooled and seed-level summaries.
 The manifest records the seed ensemble, common design, source revision, and
 no-selection policy.
