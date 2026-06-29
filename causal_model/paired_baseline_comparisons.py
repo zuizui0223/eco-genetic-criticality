@@ -16,6 +16,11 @@ and genetic-only uses
 This prevents a simple loss of total input amplitude from masquerading as a
 mechanistic ablation effect.  Trait-only also sets ``high_allele_growth=0`` so
 p cannot reach q indirectly through population size and density.
+
+Every paired trajectory is also audited against the canonical H1 interaction
+update.  The audit does not strengthen the ablation into a theorem; it marks
+whether a baseline remains in the canonical theorem limit or is a controlled
+departure from it.
 """
 from __future__ import annotations
 
@@ -23,8 +28,10 @@ import csv
 import json
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
+from statistics import median
 from typing import Iterable, Mapping, Sequence
 
+from causal_model.h1_theorem_boundary_audit import H1TheoremBoundaryAudit, audit_h1_theorem_boundary
 from causal_model.multipatch_criticality_dynamics import DynamicsParameters, simulate
 from causal_model.multipatch_criticality_experiments import (
     ExperimentSpec,
@@ -48,6 +55,14 @@ BASELINE_IDS = (
     BASELINE_GENETIC_ONLY,
     BASELINE_FULL_ECO_GENETIC,
 )
+H1_DEPARTURE_LABELS = (
+    "density_not_one",
+    "trait_feedback_enabled",
+    "allele_feedback_enabled",
+    "support_not_equal_interaction",
+    "migration_enabled",
+    "multiple_patches",
+)
 
 
 @dataclass(frozen=True)
@@ -67,17 +82,21 @@ class BaselineDefinition:
 
 @dataclass(frozen=True)
 class PairedBaselineReplicate:
-    """Matched outcomes from all ablations using one common random seed."""
+    """Matched outcomes and theorem-boundary audits using one common random seed."""
 
     replicate_index: int
     seed: int
     outcomes: Mapping[str, ReplicateSummary]
+    h1_theorem_boundaries: Mapping[str, H1TheoremBoundaryAudit]
 
     def as_dict(self) -> dict[str, object]:
         return {
             "replicate_index": self.replicate_index,
             "seed": self.seed,
             "outcomes": {baseline_id: outcome.as_dict() for baseline_id, outcome in self.outcomes.items()},
+            "h1_theorem_boundaries": {
+                baseline_id: audit.as_dict() for baseline_id, audit in self.h1_theorem_boundaries.items()
+            },
         }
 
 
@@ -222,7 +241,8 @@ def run_paired_baseline_comparisons(
     Each baseline in a replicate receives the same derived seed and differs only
     through ``baseline_parameters``.  Shared seeds make pairwise contrasts more
     stable; they do not make the stochastic paths identical after mechanisms
-    cause the trajectories to diverge.
+    cause the trajectories to diverge.  Each output also carries a per-baseline
+    H1 theorem-boundary audit.
     """
     selected_scenarios = tuple(scenarios) if scenarios is not None else default_scenarios(spec)
     selected_baselines = _validated_baseline_ids(baseline_ids)
@@ -282,6 +302,7 @@ def _run_paired_replicate(
     seed = derived_seed(spec.master_seed, cell.cell_index, replicate_index)
     common = parameters_for_cell(spec, scenario, cell, seed=seed)
     outcomes: dict[str, ReplicateSummary] = {}
+    h1_theorem_boundaries: dict[str, H1TheoremBoundaryAudit] = {}
     for baseline_id in baseline_ids:
         result = simulate(baseline_parameters(common, baseline_id))
         outcomes[baseline_id] = summarise_replicate(
@@ -293,7 +314,13 @@ def _run_paired_replicate(
             fst_warning_threshold=spec.fst_warning_threshold,
             allele_loss_threshold=spec.allele_loss_threshold,
         )
-    return PairedBaselineReplicate(replicate_index=replicate_index, seed=seed, outcomes=outcomes)
+        h1_theorem_boundaries[baseline_id] = audit_h1_theorem_boundary(result)
+    return PairedBaselineReplicate(
+        replicate_index=replicate_index,
+        seed=seed,
+        outcomes=outcomes,
+        h1_theorem_boundaries=h1_theorem_boundaries,
+    )
 
 
 def _summarise_paired_replicates(
@@ -305,8 +332,16 @@ def _summarise_paired_replicates(
         baseline_id: tuple(replicate.outcomes[baseline_id] for replicate in replicates)
         for baseline_id in baseline_ids
     }
+    audits_by_baseline = {
+        baseline_id: tuple(replicate.h1_theorem_boundaries[baseline_id] for replicate in replicates)
+        for baseline_id in baseline_ids
+    }
     summary: dict[str, object] = {
-        "models": {baseline_id: _summarise_model(outcomes) for baseline_id, outcomes in by_baseline.items()}
+        "models": {baseline_id: _summarise_model(outcomes) for baseline_id, outcomes in by_baseline.items()},
+        "scope": {
+            baseline_id: _summarise_h1_theorem_boundaries(audits)
+            for baseline_id, audits in audits_by_baseline.items()
+        },
     }
     if BASELINE_FULL_ECO_GENETIC in by_baseline:
         full = by_baseline[BASELINE_FULL_ECO_GENETIC]
@@ -316,6 +351,37 @@ def _summarise_paired_replicates(
                 contrasts[f"full_minus_{baseline_id}"] = _paired_contrast(full, by_baseline[baseline_id])
         summary["paired_contrasts"] = contrasts
     return summary
+
+
+def _summarise_h1_theorem_boundaries(
+    audits: Sequence[H1TheoremBoundaryAudit],
+) -> dict[str, object]:
+    if not audits:
+        raise ValueError("audits must be nonempty")
+    return {
+        "patchwise_canonical_update_probability": _probability(
+            audit.patchwise_canonical_update_certified for audit in audits
+        ),
+        "single_patch_canonical_theorem_limit_probability": _probability(
+            audit.single_patch_canonical_theorem_limit_certified for audit in audits
+        ),
+        "maximum_canonical_update_residual": _summary(
+            audit.maximum_canonical_update_residual for audit in audits
+        ),
+        "mean_canonical_update_residual": _summary(
+            audit.mean_canonical_update_residual for audit in audits
+        ),
+        "maximum_density_deviation_from_one": _summary(
+            audit.maximum_density_deviation_from_one for audit in audits
+        ),
+        "maximum_support_deviation_from_interaction": _summary(
+            audit.maximum_support_deviation_from_interaction for audit in audits
+        ),
+        "departure_probabilities": {
+            label: _probability(label in audit.departure_labels for audit in audits)
+            for label in H1_DEPARTURE_LABELS
+        },
+    }
 
 
 def _summarise_model(outcomes: Sequence[ReplicateSummary]) -> dict[str, float | int | None]:
@@ -400,6 +466,18 @@ def _mean(values: Iterable[float]) -> float:
     if not observed:
         raise ValueError("values must be nonempty")
     return sum(observed) / len(observed)
+
+
+def _summary(values: Iterable[float]) -> dict[str, float]:
+    observed = tuple(float(value) for value in values)
+    if not observed:
+        raise ValueError("values must be nonempty")
+    return {
+        "mean": sum(observed) / len(observed),
+        "median": median(observed),
+        "minimum": min(observed),
+        "maximum": max(observed),
+    }
 
 
 def _flatten_mapping(mapping: Mapping[str, object], prefix: str = "") -> dict[str, object]:
