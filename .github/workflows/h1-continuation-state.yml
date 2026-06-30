@@ -1,0 +1,124 @@
+name: H1 Continuation State Hold
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Experiment profile"
+        type: choice
+        required: true
+        default: standard
+        options: [quick, standard, full]
+      master_seeds:
+        description: "Comma-separated distinct master seeds"
+        type: string
+        required: true
+        default: "20260630,20260631,20260632,20260633,20260634"
+      endpoint_padding_fraction:
+        description: "Shared H1 endpoint padding fraction"
+        type: string
+        required: true
+        default: "0.5"
+      stage_generations:
+        description: "Generations per H1 continuation stage"
+        type: string
+        required: true
+        default: "30"
+      hold_generations:
+        description: "Fresh generations after full-state transfer"
+        type: string
+        required: true
+        default: "30"
+      nested_barrier_points:
+        description: "Comma-separated nested grid point counts"
+        type: string
+        required: true
+        default: "25,49,97"
+      interaction_separation_threshold:
+        description: "Minimum high-minus-low q separation"
+        type: string
+        required: true
+        default: "0.05"
+      maximum_normalized_bracket_width:
+        description: "Maximum finest bracket width as a fraction of canonical interval"
+        type: string
+        required: true
+        default: "0.03"
+      replicates:
+        description: "Optional replicate override; leave blank for profile default"
+        type: string
+        required: false
+        default: ""
+      allow_full_profile:
+        description: "I explicitly approve the expensive full profile"
+        type: boolean
+        required: true
+        default: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Guard full profile
+        if: ${{ inputs.profile == 'full' && !inputs.allow_full_profile }}
+        run: |
+          echo "The full profile requires allow_full_profile=true." >&2
+          exit 2
+      - name: Run H1 continuation-state holds
+        shell: bash
+        env:
+          PROFILE: ${{ inputs.profile }}
+          MASTER_SEEDS: ${{ inputs.master_seeds }}
+          ENDPOINT_PADDING_FRACTION: ${{ inputs.endpoint_padding_fraction }}
+          STAGE_GENERATIONS: ${{ inputs.stage_generations }}
+          HOLD_GENERATIONS: ${{ inputs.hold_generations }}
+          NESTED_BARRIER_POINTS: ${{ inputs.nested_barrier_points }}
+          INTERACTION_SEPARATION_THRESHOLD: ${{ inputs.interaction_separation_threshold }}
+          MAXIMUM_NORMALIZED_BRACKET_WIDTH: ${{ inputs.maximum_normalized_bracket_width }}
+          REPLICATES: ${{ inputs.replicates }}
+        run: |
+          set -euo pipefail
+          SEED_TAG="$(printf '%s' "$MASTER_SEEDS" | tr ',' '_' | tr -cd '[:alnum:]_.-')"
+          GRID_TAG="$(printf '%s' "$NESTED_BARRIER_POINTS" | tr ',' '_' | tr -cd '[:alnum:]_.-')"
+          OUTDIR="artifacts/h1_continuation_state/${PROFILE}-seeds-${SEED_TAG}-grids-${GRID_TAG}"
+          ARGS=(
+            --profile "$PROFILE"
+            --output-dir "$OUTDIR"
+            --prefix run
+            --endpoint-padding-fraction "$ENDPOINT_PADDING_FRACTION"
+            --stage-generations "$STAGE_GENERATIONS"
+            --hold-generations "$HOLD_GENERATIONS"
+            --interaction-separation-threshold "$INTERACTION_SEPARATION_THRESHOLD"
+            --maximum-normalized-bracket-width "$MAXIMUM_NORMALIZED_BRACKET_WIDTH"
+          )
+          IFS=',' read -r -a SEEDS <<< "$MASTER_SEEDS"
+          for RAW in "${SEEDS[@]}"; do
+            VALUE="$(printf '%s' "$RAW" | xargs)"
+            [[ -n "$VALUE" ]] || { echo "master_seeds contains an empty value." >&2; exit 2; }
+            ARGS+=(--master-seed "$VALUE")
+          done
+          IFS=',' read -r -a POINTS <<< "$NESTED_BARRIER_POINTS"
+          for RAW in "${POINTS[@]}"; do
+            VALUE="$(printf '%s' "$RAW" | xargs)"
+            [[ -n "$VALUE" ]] || { echo "nested_barrier_points contains an empty value." >&2; exit 2; }
+            ARGS+=(--barrier-points "$VALUE")
+          done
+          if [[ -n "$REPLICATES" ]]; then ARGS+=(--replicates "$REPLICATES"); fi
+          python scripts/run_finite_h1_continuation_state_audit.py "${ARGS[@]}"
+      - name: Upload H1 continuation-state artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: h1-continuation-state-${{ inputs.profile }}-seeds-${{ inputs.master_seeds }}-grids-${{ inputs.nested_barrier_points }}
+          path: artifacts/h1_continuation_state/
+          if-no-files-found: warn
+          retention-days: 90
