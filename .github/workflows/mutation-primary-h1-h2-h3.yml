@@ -1,0 +1,66 @@
+name: Mutation Primary H1 H2 H3 Chain
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-primary-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Run full-state mutation primary chain
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m causal_model.mutation_primary_h1_h2_h3_chain_cli \
+            --profile standard \
+            --replicates 20 \
+            --master-seed 20260810 \
+            --master-seed 20260811 \
+            --master-seed 20260812 \
+            --master-seed 20260813 \
+            --master-seed 20260814 \
+            --endpoint-padding-fraction 0.5 \
+            --stage-generations 30 \
+            --hold-generations 30 \
+            --barrier-points 25 \
+            --barrier-points 49 \
+            --barrier-points 97 \
+            --interaction-separation-threshold 0.05 \
+            --maximum-normalized-bracket-width 0.03 \
+            --output-dir artifacts/mutation_primary_h1_h2_h3 \
+            --prefix primary_chain_independent_h2h3_v1
+      - name: Write protocol identity
+        shell: bash
+        run: |
+          cat > artifacts/mutation_primary_h1_h2_h3/protocol.txt <<'EOF'
+          campaign=mutation_primary_full_state_h1_h2_h3_v1
+          source_domain=independent_validation_v1
+          source_validation_run=28436777080
+          primary_selection=min_five_seed_block_joint_support_ge_0.75
+          primary_cells=12
+          chain_master_seeds=20260810,20260811,20260812,20260813,20260814
+          replicates_per_cell_per_seed=20
+          h1_endpoint_padding_fraction=0.5
+          h1_stage_generations=30
+          h1_hold_generations=30
+          h1_nested_barrier_points=25,49,97
+          h3_primary_comparison=one_large_vs_equal_isolated
+          migration_interpretation=allele_frequency_mixing_only_not_rescue
+          EOF
+      - name: Upload mutation primary chain artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-primary-h1-h2-h3-seeds-20260810-20260814
+          path: artifacts/mutation_primary_h1_h2_h3/
+          if-no-files-found: warn
+          retention-days: 90
