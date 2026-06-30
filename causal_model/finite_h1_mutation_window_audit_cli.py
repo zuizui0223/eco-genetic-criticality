@@ -1,4 +1,4 @@
-"""Command-line runner for the H1 mutation polymorphism-window screen."""
+"""Command-line runner for H1 mutation polymorphism-window campaigns."""
 from __future__ import annotations
 
 import argparse
@@ -28,10 +28,11 @@ _FACTORIES = {PROFILE_QUICK: quick_profile, PROFILE_STANDARD: standard_profile, 
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Screen symmetric mutation rates for joint H1 full-state memory and genetic eligibility.")
+    parser = argparse.ArgumentParser(description="Run a symmetric-mutation H1 memory and genetic-eligibility campaign.")
     parser.add_argument("--profile", choices=tuple(_FACTORIES), default=PROFILE_STANDARD)
     parser.add_argument("--output-dir", type=Path, default=Path("artifacts/h1_mutation_window"))
     parser.add_argument("--prefix", default=None)
+    parser.add_argument("--campaign-role", default="screen_v1", help="Declared role recorded in the artifact manifest; for example screen_v1 or independent_validation_v1.")
     parser.add_argument("--replicates", type=int, default=None)
     parser.add_argument("--generations", type=int, default=None)
     parser.add_argument("--master-seed", action="append", type=int, dest="master_seeds")
@@ -58,6 +59,9 @@ def run_from_namespace(args: argparse.Namespace) -> dict[str, Path]:
     seeds = tuple(DEFAULT_MASTER_SEEDS if args.master_seeds is None else args.master_seeds)
     rates = tuple(DEFAULT_MUTATION_RATES if args.mutation_rates is None else args.mutation_rates)
     points = tuple((25, 49, 97) if args.nested_barrier_points is None else args.nested_barrier_points)
+    campaign_role = str(args.campaign_role).strip()
+    if not campaign_role:
+        raise ValueError("campaign_role must be nonempty")
     seed_tag = "_".join(str(seed) for seed in seeds)
     rate_tag = "_".join(str(rate).replace(".", "p") for rate in rates)
     prefix = args.prefix or f"h1_mutation_window_{spec.profile}_rates_{rate_tag}_seeds_{seed_tag}"
@@ -84,6 +88,7 @@ def run_from_namespace(args: argparse.Namespace) -> dict[str, Path]:
     manifest = {
         "runner": "causal_model.finite_h1_mutation_window_audit_cli",
         "campaign": "finite_h1_symmetric_mutation_window_v1",
+        "campaign_role": campaign_role,
         "code_revision": args.code_revision,
         "spec": asdict(spec),
         "master_seeds": list(seeds),
