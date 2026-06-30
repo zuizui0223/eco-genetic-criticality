@@ -1,0 +1,95 @@
+name: H1 Mutation Independent Validation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Run independent mutation-H1 validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          # This protocol is intentionally fixed. It does not reuse the screen seeds.
+          PROFILE="standard"
+          REPLICATES="20"
+          MASTER_SEEDS="20260710,20260711,20260712,20260713,20260714"
+          MUTATION_RATES="0.10,0.15,0.20"
+          ENDPOINT_PADDING_FRACTION="0.5"
+          STAGE_GENERATIONS="30"
+          HOLD_GENERATIONS="30"
+          NESTED_BARRIER_POINTS="25,49,97"
+          INTERACTION_SEPARATION_THRESHOLD="0.05"
+          MAXIMUM_NORMALIZED_BRACKET_WIDTH="0.03"
+          POLYMORPHISM_EPSILON="1e-12"
+          CAMPAIGN_ROLE="independent_validation_v1"
+
+          OUTDIR="artifacts/h1_mutation_validation/standard-independent-seeds-20260710_20260714-rates-0p10_0p15_0p20"
+          ARGS=(
+            --profile "$PROFILE"
+            --output-dir "$OUTDIR"
+            --prefix independent_validation_v1
+            --campaign-role "$CAMPAIGN_ROLE"
+            --replicates "$REPLICATES"
+            --endpoint-padding-fraction "$ENDPOINT_PADDING_FRACTION"
+            --stage-generations "$STAGE_GENERATIONS"
+            --hold-generations "$HOLD_GENERATIONS"
+            --interaction-separation-threshold "$INTERACTION_SEPARATION_THRESHOLD"
+            --maximum-normalized-bracket-width "$MAXIMUM_NORMALIZED_BRACKET_WIDTH"
+            --polymorphism-epsilon "$POLYMORPHISM_EPSILON"
+          )
+          IFS=',' read -r -a SEEDS <<< "$MASTER_SEEDS"
+          for RAW in "${SEEDS[@]}"; do
+            VALUE="$(printf '%s' "$RAW" | xargs)"
+            [[ -n "$VALUE" ]] || { echo "master seed list contains an empty value." >&2; exit 2; }
+            ARGS+=(--master-seed "$VALUE")
+          done
+          IFS=',' read -r -a RATES <<< "$MUTATION_RATES"
+          for RAW in "${RATES[@]}"; do
+            VALUE="$(printf '%s' "$RAW" | xargs)"
+            [[ -n "$VALUE" ]] || { echo "mutation-rate list contains an empty value." >&2; exit 2; }
+            ARGS+=(--mutation-rate "$VALUE")
+          done
+          IFS=',' read -r -a POINTS <<< "$NESTED_BARRIER_POINTS"
+          for RAW in "${POINTS[@]}"; do
+            VALUE="$(printf '%s' "$RAW" | xargs)"
+            [[ -n "$VALUE" ]] || { echo "barrier-point list contains an empty value." >&2; exit 2; }
+            ARGS+=(--barrier-points "$VALUE")
+          done
+          python scripts/run_finite_h1_mutation_window_audit.py "${ARGS[@]}"
+      - name: Write validation protocol
+        shell: bash
+        run: |
+          cat > artifacts/h1_mutation_validation/validation_protocol.txt <<'EOF'
+          campaign_role=independent_validation_v1
+          profile=standard
+          master_seeds=20260710,20260711,20260712,20260713,20260714
+          mutation_rates=0.10,0.15,0.20
+          replicates_per_pair_per_seed=20
+          endpoint_padding_fraction=0.5
+          stage_generations=30
+          hold_generations=30
+          nested_barrier_points=25,49,97
+          interaction_separation_threshold=0.05
+          maximum_normalized_bracket_width=0.03
+          polymorphism_epsilon=1e-12
+          analysis_unit=mutation_rate x parameter_pair x master_seed_block
+          EOF
+      - name: Upload independent validation artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: h1-mutation-independent-validation-rates-0.10-0.15-0.20-seeds-20260710-20260714
+          path: artifacts/h1_mutation_validation/
+          if-no-files-found: warn
+          retention-days: 90
