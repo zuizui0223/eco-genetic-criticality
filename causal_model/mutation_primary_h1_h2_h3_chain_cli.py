@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Sequence
 
 from causal_model.multipatch_criticality_experiments import PROFILE_FULL, PROFILE_QUICK, PROFILE_STANDARD, full_profile, quick_profile, standard_profile
-from causal_model.mutation_primary_h1_h2_h3_chain import (
+from causal_model.mutation_primary_h1_h2_h3_runtime import (
     DEFAULT_PRIMARY_CHAIN_MASTER_SEEDS,
     run_mutation_primary_h1_h2_h3_chain,
     write_mutation_primary_h1_h2_h3_artifacts,
