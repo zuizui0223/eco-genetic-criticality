@@ -1,0 +1,46 @@
+name: Run standard H1 polymorphism eligibility audit
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Run declared standard eligibility audit
+        run: |
+          set -euo pipefail
+          python scripts/run_finite_h1_polymorphism_eligibility_audit.py \
+            --profile standard \
+            --output-dir artifacts/h1_polymorphism_eligibility/standard-seeds-20260630_20260631_20260632_20260633_20260634-grids-25_49_97 \
+            --prefix run \
+            --master-seed 20260630 \
+            --master-seed 20260631 \
+            --master-seed 20260632 \
+            --master-seed 20260633 \
+            --master-seed 20260634 \
+            --endpoint-padding-fraction 0.5 \
+            --stage-generations 30 \
+            --hold-generations 30 \
+            --barrier-points 25 \
+            --barrier-points 49 \
+            --barrier-points 97 \
+            --interaction-separation-threshold 0.05 \
+            --maximum-normalized-bracket-width 0.03 \
+            --polymorphism-epsilon 1e-12
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h1-polymorphism-eligibility-standard-seeds-20260630_20260631_20260632_20260633_20260634-grids-25_49_97
+          path: artifacts/h1_polymorphism_eligibility/
+          if-no-files-found: error
+          retention-days: 90
