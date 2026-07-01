@@ -1,4 +1,8 @@
-from causal_model.h2_relative_warning_contract import RelativeWarningDefinition, compare_relative_warning
+from causal_model.h2_relative_warning_contract import (
+    DEFAULT_RELATIVE_DECLINE_FRACTIONS,
+    RelativeWarningDefinition,
+    compare_relative_warning,
+)
 from causal_model.h2r_independent_relative_validation import (
     H2RValidationRecord,
     H2RValidationTrajectory,
@@ -8,18 +12,22 @@ from causal_model.h2r_validation_domain import SELECTED_VALIDATION_DOMAIN, h2r_v
 
 
 def _record(seed: int, *, trait_loss_time: int | None) -> H2RValidationRecord:
-    alpha_definition = RelativeWarningDefinition("H_alpha", 0.10)
-    gamma_definition = RelativeWarningDefinition("H_gamma", 0.10)
     alpha = (0.50, 0.50, 0.45, 0.40)
     gamma = (0.50, 0.49, 0.45, 0.40)
+    comparisons = tuple(
+        compare_relative_warning(
+            alpha if diversity_id == "H_alpha" else gamma,
+            trait_loss_time=trait_loss_time,
+            definition=RelativeWarningDefinition(diversity_id, decline),
+        )
+        for diversity_id in ("H_alpha", "H_gamma")
+        for decline in DEFAULT_RELATIVE_DECLINE_FRACTIONS
+    )
     outcome = H2RValidationTrajectory(
         trait_loss_time_post_baseline=trait_loss_time,
         h_alpha_series=alpha,
         h_gamma_series=gamma,
-        comparisons=(
-            compare_relative_warning(alpha, trait_loss_time=trait_loss_time, definition=alpha_definition),
-            compare_relative_warning(gamma, trait_loss_time=trait_loss_time, definition=gamma_definition),
-        ),
+        comparisons=comparisons,
     )
     return H2RValidationRecord(
         master_seed=seed,
