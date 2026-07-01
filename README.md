@@ -37,6 +37,13 @@ limits are recorded in [`docs/final_evidence_ledger.md`](docs/final_evidence_led
   realised trait loss in one calibration-selected deterioration configuration;
   this is conditional Type S evidence, not a universal rule.
 
+## Manuscript synthesis
+
+The paper-facing theory draft is in [`manuscript/`](manuscript/). It separates
+exact theorems, closure-conditional results, dynamic hypotheses, and finite Type
+S results; it neither alters the final evidence ledger nor introduces new
+simulations. The entry point is [`manuscript/README.md`](manuscript/README.md).
+
 ## Current model layers
 
 - `canonical_h1_bifurcation.py` gives the specified-system H1 certificate for the one-state logistic reduction: strict bistability, branch stability, and high-trait margin change.
