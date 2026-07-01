@@ -1,0 +1,67 @@
+name: H2-R Ramp-Hold Trait-Loss Calibration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  calibrate-ramp-hold-trait-loss:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Run ramp-and-hold trait-loss-only calibration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m causal_model.h2r_ramp_hold_trait_loss_calibration_cli \
+            --profile standard \
+            --replicates 5 \
+            --master-seed 20261010 \
+            --master-seed 20261011 \
+            --master-seed 20261012 \
+            --master-seed 20261013 \
+            --master-seed 20261014 \
+            --endpoint-padding-fraction 0.5 \
+            --stage-generations 30 \
+            --hold-generations 30 \
+            --barrier-points 25 \
+            --barrier-points 49 \
+            --barrier-points 97 \
+            --interaction-separation-threshold 0.05 \
+            --maximum-normalized-bracket-width 0.03 \
+            --output-dir artifacts/h2r_ramp_hold_calibration \
+            --prefix ramp_hold_trait_loss_calibration_v2
+      - name: Write calibration protocol identity
+        shell: bash
+        run: |
+          cat > artifacts/h2r_ramp_hold_calibration/protocol.txt <<'EOF'
+          campaign=h2r_ramp_hold_trait_loss_only_calibration_v2
+          predecessor_linear_calibration_run=28493522149
+          source_domain=independent_validation_v1_primary_12_cells
+          source_h2r_contract=H2-R
+          calibration_master_seeds=20261010,20261011,20261012,20261013,20261014
+          replicates_per_primary_cell_per_seed=5
+          ramp_generations=30
+          hold_generations=90,210
+          total_normalized_barrier_increases=0.15,0.30,0.45
+          selection_target_trait_loss_probability_per_seed_block=0.30,0.70
+          schedule_selection=nearest_pooled_0.50_then_shorter_total_horizon_then_smaller_increase
+          calibration_measure=post_baseline_realised_high_trait_loss_only
+          forbidden_outputs=H_alpha,H_gamma,relative_warning_time,warning_lead_count,lead_time
+          common_random_numbers=shared_within_source_across_schedule_candidates
+          EOF
+      - name: Upload ramp-hold H2-R calibration artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: h2r-ramp-hold-trait-loss-calibration-seeds-20261010-20261014
+          path: artifacts/h2r_ramp_hold_calibration/
+          if-no-files-found: warn
+          retention-days: 90
