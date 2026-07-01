@@ -1,54 +1,52 @@
-# H2 reframing after the mutation-conditioned primary chain
+# H2 reframing and final evidence status
 
 ## What remains fixed
 
-Nothing in this document changes H1, H3, the symmetric-mutation closure, the
-full-state H1 transfer rule, or the existing H2 absolute-threshold definition.
+Nothing here changes H1, H3, the symmetric-mutation closure, or the full-state
+H1 transfer rule. H2-A and H2-R remain distinct propositions. No finite result
+is promoted to a theorem or a biological estimate.
 
-The existing H2 statement is retained as **H2-A**:
+## H2-A: original fixed-threshold proposition
+
+The original H2 statement is retained as **H2-A**:
 
 > Under declared conditions, fixed absolute \(H_\alpha\) or \(H_\gamma\)
 > warning thresholds can precede realised high-trait loss.
 
-H2-A is not labelled false after the stationary mutation-conditioned primary
-chain. It is **unresolved in that campaign**, because most trajectories were
-right-censored: realised trait loss and/or a fixed-threshold warning was absent
-within the 30-generation horizon. An event order cannot be inferred from a
-missing event.
+The fixed thresholds are
 
-## Why an additional proposition is needed
+\[
+H_\alpha\le0.20,\qquad H_\gamma\le0.20.
+\]
 
-The primary chain established a different finite result: after a valid H1 high
-full-state source was projected at fixed total area, equal isolation consistently
-reduced interaction, local effective size, and realised high-trait mass relative
-to one large patch. That is H3 evidence. Yet symmetric mutation maintained enough
-polymorphism that both absolute genetic warning crossings and realised trait-loss
-crossings were sparse in the same horizon.
+The stationary mutation-primary chain left H2-A unresolved because most records
+were right-censored. Later, the completed independent H2-R validation supplied
+raw diversity series in a configuration selected *without* genetic-warning
+outcomes. A no-resimulation secondary audit applied exactly these pre-existing
+H2-A thresholds to those raw series:
 
-Thus the stationary run cannot distinguish these possibilities:
+| fixed warning | valid pairs | lead | tie | lag | censored |
+|---|---:|---:|---:|---:|---:|
+| \(H_\alpha\le0.20\) | 20 | 14 | 0 | 6 | 63 |
+| \(H_\gamma\le0.20\) | 16 | 8 | 0 | 8 | 67 |
 
-1. genetic change does precede loss, but neither event has been observed yet;
-2. mutation maintains diversity above fixed absolute thresholds while support
-   deteriorates; or
-3. an absolute heterozygosity threshold is not the appropriate warning statistic
-   for this closure.
+Thus H2-A is **not retained as a robust absolute-warning rule** in the selected
+finite closure. Observed lags prevent a uniform ordering claim. This is not a
+proof that H2-A is false in every model or biological system, so its global
+truth value is not assigned. The repository deliberately does not tune the
+threshold, mutation, barrier, or horizon after this result.
 
-The correct response is not to relabel censoring as support or failure. It is to
-state a new, narrower, testable dynamic proposition.
+## H2-R: conditional relative genetic warning
 
-## New proposition: H2-R
-
-**H2-R — conditional relative genetic warning.**
-
-Let \(H_x(t)\) denote \(H_\alpha(t)\) or \(H_\gamma(t)\), for
-\(x\in\{\alpha,\gamma\}\), along a trajectory starting from a polymorphic,
-H1-conditioned full state. Under a **predeclared monotone decline in interaction
-support**, define
+**H2-R** is a separate dynamic hypothesis. Let \(H_x(t)\) denote
+\(H_\alpha(t)\) or \(H_\gamma(t)\), for \(x\in\{\alpha,\gamma\}\), along a
+trajectory starting from a polymorphic H1-conditioned full state. Under a
+predeclared monotone decline in interaction support, define
 
 \[
 \tau_{\Delta H_x(r)}
 =
-\inf\left\{t>0: H_x(t)\le (1-r)H_x(0)\right\},
+\inf\left\{t>0:H_x(t)\le(1-r)H_x(0)\right\},
 \qquad r\in\{0.05,0.10,0.20\},
 \]
 
@@ -58,41 +56,45 @@ and let \(\tau_T\) be first realised high-trait loss. H2-R asks whether
 \tau_{\Delta H_x(r)}<\tau_T.
 \]
 
-The inequality is evaluated only when the baseline is eligible and both
-first-passage events are observed. Otherwise the record is censored. The
-baseline time \(t=0\) is never called an early warning.
+A baseline time is never called a warning. Missing warning or trait-loss events
+remain censored, and a tie is not a lead.
 
-This is a **dynamic hypothesis (H)**. Any finite result remains Type S for the
-specified mutation and deterioration closure.
+## Selection before warning outcomes
 
-## The deterioration schedule is not selected using warning success
-
-For an H2-R campaign, interaction support is reduced by a monotone barrier
-schedule expressed relative to that cell's canonical bistable-interval width.
-Before examining H-alpha or H-gamma warning outcomes, a short calibration chooses
-from this predeclared family:
+H2-R schedule calibration measured realised trait loss only. The initial
+linear-ramp family selected no cell. A second predeclared ramp-and-hold family
+kept the same normalized total barrier increases while allowing time at the
+final barrier. In Actions run `28496735824`, exactly one of the 12 frozen
+mutation-H1 primary cells met the all-seed-block trait-loss availability rule:
 
 ```text
-horizons: 60, 120 generations
-total normalized barrier increases: 0.15, 0.30, 0.45
-trait-loss target: 0.30–0.70 in every calibration seed block
+mutation rate = 0.10
+A_ref = 0.8
+kappa = 6.0
+equal-isolated landscape
+ramp 30 + hold 90 generations
+normalized barrier increase = 0.15
+calibration seed-block trait-loss frequencies = 0.50, 0.40, 0.40, 0.50, 0.50
 ```
 
-The selected schedule is the eligible candidate whose pooled trait-loss frequency
-is closest to 0.50; ties go to the shorter horizon and then the smaller barrier
-increase. If no candidate satisfies every seed block, the cell remains
-`no_schedule_selected`. The rule does **not** inspect warning lead counts,
-lead-time size, or H-alpha/H-gamma values.
+The other eleven cells were not carried into warning validation. The selection
+neither calculated nor inspected H-alpha, H-gamma, warning lead counts, or lead
+times.
 
-## Consequences for interpretation
+## Final H2-R result
 
-H2-A and H2-R answer different questions.
+Independent validation used fresh seeds `20261110`--`20261114`, 20 replicates
+per seed, and the locked configuration above (Actions run `28500796310`). Of
+100 attempted H1 sources, 83 yielded an available projected trajectory; 35 of
+those had realised trait loss in the scheduled horizon. For each of the six
+predeclared endpoints—\(H_\alpha\) and \(H_\gamma\) at each
+\(r=0.05,0.10,0.20\)—all 35 valid pairs had warning before realised trait loss,
+with zero ties and zero lags. The other 48 available trajectories are
+right-censored because trait loss was not observed in horizon.
 
-| label | question | evidence status now |
-|---|---|---|
-| H2-A | Does a fixed absolute diversity threshold precede loss? | unresolved because of stationary-run censoring |
-| H2-R | Under declared deteriorating support, does baseline-relative diversity erosion precede loss? | untested, now formally specified |
+H2-R is therefore **supported as Type S evidence only in this selected
+configuration and for observed event pairs**. It does not establish H2-A, a
+universal early-warning rule, or a conclusion about the eleven
+calibration-unselected cells.
 
-A future H2-R result may support the relative warning, show no lead, show late
-warning, or remain censored. None of these outcomes modifies the already fixed
-H1 or H3 statements.
+The complete final status is recorded in `docs/final_evidence_ledger.md`.
