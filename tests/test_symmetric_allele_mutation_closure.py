@@ -1,11 +1,14 @@
 from dataclasses import replace
 
+import pytest
+
 from causal_model.finite_h1_mutation_window_audit import run_finite_h1_mutation_window_audit
 from causal_model.multipatch_criticality_dynamics import DynamicsParameters, simulate
 from causal_model.multipatch_criticality_experiments import quick_profile
 from causal_model.symmetric_allele_mutation_closure import (
     apply_symmetric_allele_mutation,
     simulate_with_symmetric_allele_mutation,
+    validate_interaction_barrier_schedule,
 )
 
 
@@ -19,6 +22,33 @@ def test_zero_mutation_delegates_to_identical_legacy_trajectory():
         random_seed=101,
     )
     assert simulate_with_symmetric_allele_mutation(parameters, mutation_rate=0.0) == simulate(parameters)
+
+
+def test_constant_barrier_schedule_matches_existing_mutation_trajectory():
+    parameters = DynamicsParameters(
+        patch_areas=(1.0,),
+        generations=4,
+        initial_population=(20,),
+        initial_interaction=(0.6,),
+        initial_high_allele_frequency=(0.7,),
+        interaction_barrier=0.55,
+        random_seed=101,
+    )
+    fixed = simulate_with_symmetric_allele_mutation(parameters, mutation_rate=0.1)
+    scheduled = simulate_with_symmetric_allele_mutation(
+        parameters,
+        mutation_rate=0.1,
+        interaction_barrier_schedule=(0.55, 0.55, 0.55, 0.55),
+    )
+    assert scheduled == fixed
+
+
+def test_barrier_schedule_requires_one_finite_value_per_generation():
+    parameters = DynamicsParameters(patch_areas=(1.0,), generations=3)
+    with pytest.raises(ValueError, match="exactly parameters.generations"):
+        validate_interaction_barrier_schedule(parameters, (0.5, 0.6))
+    with pytest.raises(ValueError, match="finite"):
+        validate_interaction_barrier_schedule(parameters, (0.5, float("nan"), 0.6))
 
 
 def test_symmetric_mutation_map_moves_fixed_states_inward_and_keeps_half_fixed():
