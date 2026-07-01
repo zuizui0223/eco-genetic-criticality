@@ -11,19 +11,23 @@ high-to-low and low-to-high transitions occur at the same rate.  It is an
 explicit new numerical closure, not a biological estimate and not a change to
 the theorem layer.
 
-At ``mu = 0`` the function delegates to ``simulate`` directly.  Thus legacy
-runs retain identical stochastic trajectories and results.
+The optional ``interaction_barrier_schedule`` is a generation-indexed external
+support schedule.  It replaces only the barrier used in the q update at each
+generation; all demographic, allele, and trait-update rules stay unchanged.
+When omitted, existing H1/H3 calls follow the identical fixed-barrier path.
 """
 from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import replace
+from math import exp, isfinite
 from random import Random
-from typing import Iterator
+from typing import Iterator, Sequence
 
 from causal_model.multipatch_criticality_dynamics import (
     DynamicsParameters,
     SimulationResult,
+    _abundance_from_distribution,
     _binomial,
     _effective_size,
     _initial_values,
@@ -54,10 +58,26 @@ def apply_symmetric_allele_mutation(frequency: float, mutation_rate: float) -> f
     return rate + (1.0 - 2.0 * rate) * frequency
 
 
+def validate_interaction_barrier_schedule(
+    parameters: DynamicsParameters,
+    interaction_barrier_schedule: Sequence[float] | None,
+) -> tuple[float, ...] | None:
+    """Validate one finite barrier value for every simulated generation."""
+    if interaction_barrier_schedule is None:
+        return None
+    values = tuple(float(value) for value in interaction_barrier_schedule)
+    if len(values) != parameters.generations:
+        raise ValueError("interaction_barrier_schedule must contain exactly parameters.generations values")
+    if any(not isfinite(value) for value in values):
+        raise ValueError("interaction_barrier_schedule values must be finite")
+    return values
+
+
 def simulate_with_symmetric_allele_mutation(
     parameters: DynamicsParameters,
     *,
     mutation_rate: float,
+    interaction_barrier_schedule: Sequence[float] | None = None,
 ) -> SimulationResult:
     """Run the finite life cycle with post-migration, pre-drift mutation.
 
@@ -65,9 +85,14 @@ def simulate_with_symmetric_allele_mutation(
     the existing binomial drift draw.  Trait recruitment at generation t uses
     the resident p_t exactly as in the base closure; mutation affects p_{t+1}
     and therefore subsequent recruitment and q-feedback.
+
+    When ``interaction_barrier_schedule`` is supplied, entry ``g - 1`` is used
+    for generation ``g`` in the q update.  The schedule never changes the stored
+    source parameters and never modifies the legacy simulator.
     """
     rate = validate_symmetric_allele_mutation_rate(mutation_rate)
-    if rate == 0.0:
+    barriers = validate_interaction_barrier_schedule(parameters, interaction_barrier_schedule)
+    if rate == 0.0 and barriers is None:
         return simulate(parameters)
 
     rng = Random(parameters.random_seed)
@@ -75,6 +100,7 @@ def simulate_with_symmetric_allele_mutation(
     snapshots = [_snapshot(0, population, interaction, frequency, trait_distribution, trait_abundance, parameters)]
 
     for generation in range(1, parameters.generations + 1):
+        barrier = parameters.interaction_barrier if barriers is None else barriers[generation - 1]
         current_occupancy = snapshots[-1].trait_occupancy
         current_high_mass = tuple(summary.high_trait_mass for summary in current_occupancy)
         carrying = tuple(parameters.density_capacity * area for area in parameters.patch_areas)
@@ -86,7 +112,7 @@ def simulate_with_symmetric_allele_mutation(
         q_next = tuple(
             sigmoid(
                 parameters.interaction_feedback
-                * ((area / parameters.area_reference) * dens * signal - parameters.interaction_barrier)
+                * ((area / parameters.area_reference) * dens * signal - barrier)
             )
             for area, dens, signal in zip(parameters.patch_areas, density, support)
         )
@@ -173,10 +199,3 @@ def patched_h1_mutation_runner(mutation_rate: float) -> Iterator[None]:
     finally:
         continuation.simulate = original_continuation
         hysteresis.simulate = original_hysteresis
-
-
-# Imported lazily above in the legacy-style deterministic trait path.  Keeping
-# the import after public definitions makes the dependency explicit without
-# changing the existing simulator module.
-from causal_model.multipatch_criticality_dynamics import _abundance_from_distribution
-from math import exp
