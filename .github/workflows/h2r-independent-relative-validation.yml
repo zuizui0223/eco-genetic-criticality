@@ -1,0 +1,69 @@
+name: H2-R Independent Relative Validation
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate-relative-warning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runner
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Run selected-domain independent validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m causal_model.h2r_independent_relative_validation_cli \
+            --profile standard \
+            --replicates 20 \
+            --master-seed 20261110 \
+            --master-seed 20261111 \
+            --master-seed 20261112 \
+            --master-seed 20261113 \
+            --master-seed 20261114 \
+            --endpoint-padding-fraction 0.5 \
+            --stage-generations 30 \
+            --hold-generations 30 \
+            --barrier-points 25 \
+            --barrier-points 49 \
+            --barrier-points 97 \
+            --interaction-separation-threshold 0.05 \
+            --maximum-normalized-bracket-width 0.03 \
+            --output-dir artifacts/h2r_independent_validation \
+            --prefix independent_relative_warning_v1
+      - name: Write validation protocol identity
+        shell: bash
+        run: |
+          cat > artifacts/h2r_independent_validation/protocol.txt <<'EOF'
+          campaign=h2r_independent_relative_warning_validation_v1
+          domain_selection_run=28496735824
+          selection_used_warning_outcomes=false
+          selected_domain=mu0.10_Aref0.8_kappa6.0_ramp30_hold90_d0.15
+          excluded_primary_cells=11
+          validation_master_seeds=20261110,20261111,20261112,20261113,20261114
+          replicates_per_seed=20
+          h1_grids=25,49,97
+          h1_stage_generations=30
+          h1_hold_generations=30
+          relative_declines=0.05,0.10,0.20
+          diversity_metrics=H_alpha,H_gamma
+          endpoint_selection_after_run=forbidden
+          missing_warning_or_trait_loss=censored
+          tie_is_not_lead=true
+          evidence_label=Type_S
+          EOF
+      - name: Upload independent H2-R validation artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: h2r-independent-relative-validation-seeds-20261110-20261114
+          path: artifacts/h2r_independent_validation/
+          if-no-files-found: warn
+          retention-days: 90
