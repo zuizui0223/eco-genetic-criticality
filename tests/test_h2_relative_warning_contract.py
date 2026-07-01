@@ -31,10 +31,10 @@ def test_zero_baseline_and_missing_trait_loss_remain_ineligible_or_censored():
 
 def test_calibration_selects_only_from_all_seed_trait_loss_availability_without_warning_inputs():
     too_sparse = DeteriorationCalibrationCandidate(60, 0.15, (0.10, 0.20, 0.25, 0.20, 0.15))
-    eligible = DeteriorationCalibrationCandidate(60, 0.30, (0.40, 0.45, 0.50, 0.55, 0.60))
-    also_eligible = DeteriorationCalibrationCandidate(120, 0.45, (0.45, 0.50, 0.50, 0.50, 0.55))
-    selected = select_trait_loss_only_calibration((too_sparse, eligible, also_eligible))
-    assert selected.selected == also_eligible
+    eligible = DeteriorationCalibrationCandidate(60, 0.30, (0.40, 0.45, 0.50, 0.55, 0.70))
+    closer_to_target = DeteriorationCalibrationCandidate(120, 0.45, (0.45, 0.50, 0.50, 0.50, 0.55))
+    selected = select_trait_loss_only_calibration((too_sparse, eligible, closer_to_target))
+    assert selected.selected == closer_to_target
     assert selected.reason.startswith("selected using trait-loss availability")
     no_selection = select_trait_loss_only_calibration((too_sparse,))
     assert no_selection.selected is None
