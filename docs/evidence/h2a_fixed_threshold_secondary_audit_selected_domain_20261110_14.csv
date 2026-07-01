@@ -1,0 +1,3 @@
+diversity_id,threshold,trajectory_available_count,warning_observed_count,trait_loss_observed_count,valid_pair_count,censored_count,warning_lead_count,warning_tie_count,warning_lag_count,warning_lead_probability_among_valid_pairs
+H_alpha,0.20,83,42,35,20,63,14,0,6,0.70
+H_gamma,0.20,83,28,35,16,67,8,0,8,0.50
