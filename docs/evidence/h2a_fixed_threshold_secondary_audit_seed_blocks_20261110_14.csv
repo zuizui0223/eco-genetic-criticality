@@ -1,0 +1,11 @@
+diversity_id,threshold,master_seed,trajectory_available_count,warning_observed_count,trait_loss_observed_count,valid_pair_count,warning_lead_count,warning_tie_count,warning_lag_count
+H_alpha,0.20,20261110,18,6,7,1,0,0,1
+H_alpha,0.20,20261111,15,4,5,3,3,0,0
+H_alpha,0.20,20261112,18,10,10,7,6,0,1
+H_alpha,0.20,20261113,17,13,7,5,4,0,1
+H_alpha,0.20,20261114,15,9,6,4,1,0,3
+H_gamma,0.20,20261110,18,6,7,1,0,0,1
+H_gamma,0.20,20261111,15,2,5,1,1,0,0
+H_gamma,0.20,20261112,18,8,10,6,4,0,2
+H_gamma,0.20,20261113,17,6,7,4,2,0,2
+H_gamma,0.20,20261114,15,6,6,4,1,0,3

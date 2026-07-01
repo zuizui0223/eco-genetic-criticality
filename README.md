@@ -20,6 +20,23 @@ mathematical theorem
 
 Potential viability, realised trait occupancy, allele persistence, and genetic diversity are distinct states.
 
+## Final finite-model status
+
+The current H1--H3 finite-model campaign is closed. Its canonical results and
+limits are recorded in [`docs/final_evidence_ledger.md`](docs/final_evidence_ledger.md).
+
+- **H1:** mutation-conditioned interaction-memory is supported as Type S evidence
+  in the declared finite closure.
+- **H3:** conditional on valid H1 full-state transfer, equal isolation lowers
+  interaction, local effective size, and realised high-trait mass as Type S
+  evidence in the declared closure.
+- **H2-A:** fixed absolute diversity thresholds \(H_\alpha,H_\gamma\le0.20\)
+  are not retained as a robust canonical warning rule after a no-resimulation
+  secondary audit found mixed lead/lag ordering.
+- **H2-R:** baseline-relative \(H_\alpha/H_\gamma\) erosion precedes observed
+  realised trait loss in one calibration-selected deterioration configuration;
+  this is conditional Type S evidence, not a universal rule.
+
 ## Current model layers
 
 - `canonical_h1_bifurcation.py` gives the specified-system H1 certificate for the one-state logistic reduction: strict bistability, branch stability, and high-trait margin change.
@@ -31,4 +48,4 @@ The H3 lifecycle is a declared stochastic model, not a universal claim that conn
 
 ## Scope
 
-This is the active H1–H3 theorem and finite-bin closure program migrated from `microdonta`. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. See `MIGRATION_MANIFEST.md`.
+This repository closes the active H1--H3 theorem and finite-bin closure program migrated from `microdonta`. Further biological closures, mutation models, threshold choices, or deterioration schedules should be developed as separately declared extensions rather than silently revising the final evidence ledger. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. See `MIGRATION_MANIFEST.md`.
