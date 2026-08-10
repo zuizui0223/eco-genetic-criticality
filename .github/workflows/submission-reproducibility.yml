@@ -1,6 +1,18 @@
 name: Submission reproducibility
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "REPRODUCIBILITY.md"
+      - "pyproject.toml"
+      - "causal_model/**"
+      - "docs/final_evidence_ledger.md"
+      - "manuscript/**"
+      - "reproducibility/**"
+      - "scripts/verify_release_contract.py"
+      - ".github/workflows/submission-reproducibility.yml"
   pull_request:
     branches: [main]
     paths:
