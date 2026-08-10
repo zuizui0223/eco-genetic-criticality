@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "repository": "zuizui0223/eco-genetic-criticality",
+  "role": "mechanistic_parent",
+  "scientific_commit": "dd8ee379d0d3518194c767d16402042525bc00dc",
+  "package": {
+    "name": "eco-genetic-criticality",
+    "version": "0.1.0",
+    "python": ">=3.10"
+  },
+  "companion": {
+    "repository": "zuizui0223/eco-genetic-warning-extensions",
+    "relationship": "independent extension and integrated-submission orchestrator"
+  },
+  "canonical_files": {
+    "README.md": "22ed61ff7f694a3ac8e6c2b62a2a334259a52f3e",
+    "pyproject.toml": "2ff564d033105909dce71c4b127f8386ca50cef2",
+    "docs/eco_genetic_hypothesis_program.md": "e8b4311611b6c47913a29c82277511ef38ad3b7e",
+    "docs/final_evidence_ledger.md": "5ce338bf1989fa03b81ce30a1515eb851c1aa70a",
+    "manuscript/claim_evidence_map.md": "5aaa2bee9dd7faedd9ca2229045c9ddbdcd49b9e",
+    "manuscript/main_text.md": "dbc893b6356000a3a2d83ea5c7d001c3888a962f"
+  },
+  "canonical_claims": {
+    "H1": "supported as finite Type S evidence in the declared closure",
+    "H3": "supported conditionally on H1 full-state preparation and projection",
+    "H2-R": "supported in one trait-loss-only calibrated domain and observed event pairs",
+    "H2-A": "not retained as a robust absolute-threshold rule"
+  },
+  "evidence_rules": [
+    "theorems, closure-conditional results, hypotheses, and simulations remain distinct",
+    "finite-horizon non-events remain censored",
+    "parent and extension trajectories are not pooled",
+    "maintenance packaging does not revise the canonical scientific commit"
+  ]
+}
