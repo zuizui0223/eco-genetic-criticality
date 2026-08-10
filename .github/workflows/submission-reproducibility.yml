@@ -80,7 +80,18 @@ jobs:
           cp docs/eco_genetic_hypothesis_program.md parent_release_bundle/evidence/
           cp manuscript/claim_evidence_map.md parent_release_bundle/manuscript/
           cp manuscript/supplementary_mathematical_results.md parent_release_bundle/manuscript/
-          find parent_release_bundle -type f ! -name 'MANIFEST.sha256' -print0 | sort -z | xargs -0 sha256sum > parent_release_bundle/MANIFEST.sha256
+          (
+            cd parent_release_bundle
+            find . -type f ! -name 'MANIFEST.sha256' -print0 \
+              | sort -z \
+              | xargs -0 sha256sum \
+              > MANIFEST.sha256
+          )
+
+      - name: Verify portable bundle manifest
+        run: |
+          cd parent_release_bundle
+          sha256sum --check MANIFEST.sha256
 
       - name: Upload parent release bundle
         uses: actions/upload-artifact@v4
