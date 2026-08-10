@@ -41,8 +41,13 @@ jobs:
       - name: Verify canonical scientific contract
         run: python scripts/verify_release_contract.py
 
-      - name: Build wheel and source distribution
-        run: python -m build --outdir dist
+      - name: Build wheel, source distribution, and canonical source archive
+        run: |
+          python -m build --outdir dist
+          git archive \
+            --format=tar.gz \
+            --output=dist/eco-genetic-criticality-scientific-dd8ee379.tar.gz \
+            dd8ee379d0d3518194c767d16402042525bc00dc
 
       - name: Smoke-test built wheel in a clean environment
         run: |
