@@ -22,27 +22,40 @@ Potential viability, realised trait occupancy, allele persistence, and genetic d
 
 ## Final finite-model status
 
-The current H1--H3 finite-model campaign is closed. Its canonical results and
-limits are recorded in [`docs/final_evidence_ledger.md`](docs/final_evidence_ledger.md).
+The current H1--H3 finite-model campaign is closed. Its canonical results and limits are recorded in [`docs/final_evidence_ledger.md`](docs/final_evidence_ledger.md).
 
-- **H1:** mutation-conditioned interaction-memory is supported as Type S evidence
-  in the declared finite closure.
-- **H3:** conditional on valid H1 full-state transfer, equal isolation lowers
-  interaction, local effective size, and realised high-trait mass as Type S
-  evidence in the declared closure.
-- **H2-A:** fixed absolute diversity thresholds \(H_\alpha,H_\gamma\le0.20\)
-  are not retained as a robust canonical warning rule after a no-resimulation
-  secondary audit found mixed lead/lag ordering.
-- **H2-R:** baseline-relative \(H_\alpha/H_\gamma\) erosion precedes observed
-  realised trait loss in one calibration-selected deterioration configuration;
-  this is conditional Type S evidence, not a universal rule.
+- **H1:** mutation-conditioned interaction-memory is supported as Type S evidence in the declared finite closure.
+- **H3:** conditional on valid H1 full-state transfer, equal isolation lowers interaction, local effective size, and realised high-trait mass as Type S evidence in the declared closure.
+- **H2-A:** fixed absolute diversity thresholds \(H_\alpha,H_\gamma\le0.20\) are not retained as a robust canonical warning rule after a no-resimulation secondary audit found mixed lead/lag ordering.
+- **H2-R:** baseline-relative \(H_\alpha/H_\gamma\) erosion precedes observed realised trait loss in one calibration-selected deterioration configuration; this is conditional Type S evidence, not a universal rule.
+
+## Submission role
+
+This repository is the **mechanistic parent** of the integrated Ecology Letters submission. It provides the theorem-guided interaction and fragmentation framework, the closed finite H1/H3 ledger, and the conditional symmetric-warning benchmark.
+
+The companion repository, [`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions), contains the independently declared directional-transition campaign and is the submission-bundle orchestrator. The code bases and evidence ledgers remain separate; only the manuscript argument and release package are integrated.
+
+## Reproduce and package
+
+Start with [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md). The machine-readable scientific lock is [`reproducibility/release_manifest.json`](reproducibility/release_manifest.json).
+
+A lightweight verification is:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install -e '.[dev,reproducibility]'
+python -m pytest
+python scripts/verify_release_contract.py
+python -m build
+```
+
+The `Submission reproducibility` workflow additionally smoke-tests the built wheel and uploads a checksummed `eco-genetic-criticality-release-bundle`. The canonical scientific commit remains `dd8ee379d0d3518194c767d16402042525bc00dc`; later packaging maintenance does not revise its evidence.
 
 ## Manuscript synthesis
 
-The paper-facing theory draft is in [`manuscript/`](manuscript/). It separates
-exact theorems, closure-conditional results, dynamic hypotheses, and finite Type
-S results; it neither alters the final evidence ledger nor introduces new
-simulations. The entry point is [`manuscript/README.md`](manuscript/README.md).
+The paper-facing theory draft is in [`manuscript/`](manuscript/). It separates exact theorems, closure-conditional results, dynamic hypotheses, and finite Type S results; it neither alters the final evidence ledger nor introduces new simulations. The entry point is [`manuscript/README.md`](manuscript/README.md).
 
 ## Current model layers
 
