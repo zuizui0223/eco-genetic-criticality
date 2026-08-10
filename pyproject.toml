@@ -12,6 +12,12 @@ dependencies = ["numpy>=1.24", "pandas>=2.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "matplotlib>=3.7"]
+reproducibility = ["build>=1.2"]
+
+[project.urls]
+Repository = "https://github.com/zuizui0223/eco-genetic-criticality"
+"Evidence ledger" = "https://github.com/zuizui0223/eco-genetic-criticality/blob/main/docs/final_evidence_ledger.md"
+"Integrated submission" = "https://github.com/zuizui0223/eco-genetic-warning-extensions"
 
 [tool.setuptools]
 packages = ["causal_model"]
