@@ -44,4 +44,5 @@ def test_reproducibility_guide_preserves_evidence_boundary() -> None:
     assert "mechanistic parent" in guide
     assert "dd8ee379d0d3518194c767d16402042525bc00dc" in guide
     assert "must not overwrite the canonical ledger" in guide
-    assert "parent and extension trajectories are not pooled" in guide
+    assert "separate provenance units" in guide
+    assert "must not pool their trajectories" in guide
