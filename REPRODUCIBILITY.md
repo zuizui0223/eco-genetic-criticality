@@ -45,7 +45,16 @@ The verifier checks that the canonical commit is available, that its load-bearin
 
 ### Level 3 — rerun finite campaigns
 
-The repository retains the campaign-specific GitHub Actions workflows and protocol documents used to generate H1, H3, H2-R, and the H2-A secondary audit. These workflows are intentionally separate because they use different seed families, calibration rules, and computational budgets.
+The exact campaign-specific GitHub Actions workflows and original convenience runner paths used to generate H1, H3, H2-R, and the H2-A secondary audit are preserved in the canonical scientific commit. They are intentionally not kept active on the maintenance head because the finite-model campaign is closed.
+
+For exact historical execution, check out the canonical scientific commit. For deliberate robustness reruns against the maintained package, the installed `egc` command provides one consolidated entry point to the retained CLI modules:
+
+```bash
+egc --list
+egc theorem-boundary --help
+egc h1-boundary --help
+egc h2r-independent-validation --help
+```
 
 For a manuscript reproduction, use the locked numerical summaries and evidence ledgers rather than tuning or rerunning a new parameter search. A full campaign rerun is a robustness exercise and may generate a new Type S evidence set; it must not overwrite the canonical ledger.
 

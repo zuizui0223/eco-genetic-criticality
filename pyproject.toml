@@ -21,6 +21,9 @@ reproducibility = [
   "tomli>=2.0; python_version < '3.11'",
 ]
 
+[project.scripts]
+egc = "causal_model.cli:main"
+
 [project.urls]
 Repository = "https://github.com/zuizui0223/eco-genetic-criticality"
 "Evidence ledger" = "https://github.com/zuizui0223/eco-genetic-criticality/blob/main/docs/final_evidence_ledger.md"
