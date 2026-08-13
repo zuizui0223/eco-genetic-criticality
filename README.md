@@ -53,6 +53,22 @@ python -m build
 
 The `Submission reproducibility` workflow additionally smoke-tests the built wheel and uploads a checksummed `eco-genetic-criticality-release-bundle`. The canonical scientific commit remains `dd8ee379d0d3518194c767d16402042525bc00dc`; later packaging maintenance does not revise its evidence.
 
+## Maintenance command surface
+
+The default branch is now a maintenance/release surface rather than an active simulation campaign. Historical campaign-specific GitHub Actions workflows remain immutable in the canonical scientific commit instead of staying enabled on current `main`.
+
+After installing the package, use the single `egc` entry point for the retained command-line interfaces:
+
+```bash
+egc --list
+egc theorem-boundary --help
+egc h2r-independent-validation --help
+```
+
+The former `scripts/run_*.py` convenience wrappers are intentionally removed from the maintenance head. Historical protocol documents preserve the original commands as provenance; check out the canonical scientific commit when exact historical execution is required. New maintenance work should not add one-off runner wrappers or new campaign workflows to this parent repository.
+
+Only two Actions workflows are active on the maintenance head: ordinary `CI` and `Submission reproducibility`.
+
 ## Manuscript synthesis
 
 The paper-facing theory draft is in [`manuscript/`](manuscript/). It separates exact theorems, closure-conditional results, dynamic hypotheses, and finite Type S results; it neither alters the final evidence ledger nor introduces new simulations. The entry point is [`manuscript/README.md`](manuscript/README.md).
@@ -68,4 +84,4 @@ The H3 lifecycle is a declared stochastic model, not a universal claim that conn
 
 ## Scope
 
-This repository closes the active H1--H3 theorem and finite-bin closure program migrated from `microdonta`. Further biological closures, mutation models, threshold choices, or deterioration schedules should be developed as separately declared extensions rather than silently revising the final evidence ledger. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. See `MIGRATION_MANIFEST.md`.
+This repository closes the active H1--H3 theorem and finite-bin closure program migrated from `microdonta`. Further biological closures, mutation models, threshold choices, or deterioration schedules should be developed as separately declared extensions rather than silently revising the final evidence ledger. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. Historical migration and campaign provenance remain available in Git history and the canonical scientific commit.
