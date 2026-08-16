@@ -261,8 +261,13 @@ def _prepare_mutation_high_state(
     anchor = min(candidates, key=lambda value: (abs(value - (recovery.upper_barrier + collapse.lower_barrier) / 2.0), value))
     one_large = _scenario_map(spec)[SCENARIO_ONE_LARGE]
     base = parameters_for_cell(spec, one_large, calibration.parameters, seed=record.seed)
-    canonical = canonical_h1_certificate(calibration.parameters.interaction_feedback, one_large.patch_areas[0], calibration.parameters.area_reference,
-        (interval[0] + interval[1]) / 2.0, base)
+    canonical = canonical_h1_certificate(
+        feedback_strength=calibration.parameters.interaction_feedback,
+        area=one_large.patch_areas[0],
+        area_reference=calibration.parameters.area_reference,
+        barrier=(interval[0] + interval[1]) / 2.0,
+        trait_parameters=base,
+    )
     if canonical.high_stable_branch is None or canonical.low_stable_branch is None:
         return None
     high_terminal, high_carried = _replay(rate, _with_uniform_initial_interaction(base, canonical.high_stable_branch.interaction), barriers, 1, record.seed, stage_generations, anchor)
