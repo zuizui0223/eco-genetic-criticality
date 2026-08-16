@@ -12,13 +12,3 @@ if old not in text:
 else:
     chain.write_text(text.replace(old, new, 1), encoding="utf-8")
     print("patched mutation-primary helper to keyword-only canonical API")
-
-workflow = Path(".github/workflows/h3-fragmentation-gradient-sensitivity.yml")
-wtext = workflow.read_text(encoding="utf-8")
-needle = '      - "causal_model/h3_fragmentation_gradient_sensitivity.py"\n'
-addition = needle + '      - "causal_model/mutation_primary_h1_h2_h3_chain.py"\n'
-if '      - "causal_model/mutation_primary_h1_h2_h3_chain.py"\n' not in wtext:
-    if needle not in wtext:
-        raise SystemExit("gradient workflow trigger anchor not found")
-    workflow.write_text(wtext.replace(needle, addition, 1), encoding="utf-8")
-    print("added helper path to gradient workflow trigger")
