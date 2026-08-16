@@ -1,0 +1,134 @@
+name: H3 fragmentation-gradient sensitivity
+
+on:
+  push:
+    branches: [agent/h3-fragmentation-gradient-sensitivity]
+    paths:
+      - "causal_model/h3_fragmentation_gradient_sensitivity.py"
+      - "causal_model/h3_fragmentation_gradient_sensitivity_cli.py"
+      - "scripts/aggregate_h3_fragmentation_gradient.py"
+      - "docs/H3_FRAGMENTATION_GRADIENT_SENSITIVITY_PROTOCOL.md"
+      - "tests/test_h3_fragmentation_gradient_sensitivity.py"
+      - ".github/workflows/h3-fragmentation-gradient-sensitivity.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install package and tests
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e '.[dev]'
+      - name: Test gradient protocol and implementation
+        run: python -m pytest -q tests/test_h3_fragmentation_gradient_sensitivity.py
+      - name: Compile new analysis surface
+        run: |
+          python -m py_compile causal_model/h3_fragmentation_gradient_sensitivity.py
+          python -m py_compile causal_model/h3_fragmentation_gradient_sensitivity_cli.py
+          python -m py_compile scripts/aggregate_h3_fragmentation_gradient.py
+
+  run-cell:
+    needs: validate-contract
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        cell: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install parent package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+      - name: Run preregistered primary cell gradient
+        run: |
+          python -m causal_model.h3_fragmentation_gradient_sensitivity_cli \
+            --cell-index ${{ matrix.cell }} \
+            --output-dir artifacts/cell-${{ matrix.cell }} \
+            --prefix h3_fragmentation_gradient_cell_${{ matrix.cell }}
+      - name: Validate cell denominator and design
+        run: |
+          CELL=${{ matrix.cell }} python - <<'PY'
+          import csv, os
+          from pathlib import Path
+          cell = int(os.environ['CELL'])
+          path = Path(f'artifacts/cell-{cell}/h3_fragmentation_gradient_cell_{cell}.csv')
+          rows = list(csv.DictReader(path.open(encoding='utf-8')))
+          assert len(rows) == 800, (cell, len(rows))
+          assert {int(row['primary_cell_index']) for row in rows} == {cell}
+          assert {int(row['patch_count']) for row in rows} == {1,2,3,4,6,8,12,16}
+          assert {int(row['master_seed']) for row in rows} == {20260820,20260821,20260822,20260823,20260824}
+          for n in (1,2,3,4,6,8,12,16):
+              assert sum(int(row['patch_count']) == n for row in rows) == 100
+          print(f'cell {cell}: rows={len(rows)}')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h3-fragmentation-gradient-cell-${{ matrix.cell }}
+          path: artifacts/cell-${{ matrix.cell }}
+          if-no-files-found: error
+          retention-days: 90
+
+  aggregate:
+    needs: run-cell
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download all cell artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: h3-fragmentation-gradient-cell-*
+          path: artifacts/raw
+          merge-multiple: true
+      - name: Aggregate gradient and build Supplementary figure
+        run: |
+          python scripts/aggregate_h3_fragmentation_gradient.py artifacts/raw artifacts/publication
+      - name: Validate full repeated-measures coverage
+        run: |
+          python - <<'PY'
+          import csv, json
+          from pathlib import Path
+          out = Path('artifacts/publication')
+          rows = list(csv.DictReader((out/'h3_fragmentation_gradient_records.csv').open(encoding='utf-8')))
+          cells = list(csv.DictReader((out/'h3_fragmentation_gradient_cell_summary.csv').open(encoding='utf-8')))
+          pooled = list(csv.DictReader((out/'h3_fragmentation_gradient_pooled_summary.csv').open(encoding='utf-8')))
+          metadata = json.loads((out/'h3_fragmentation_gradient_metadata.json').read_text())
+          assert len(rows) == 9600
+          assert len(cells) == 96
+          assert len(pooled) == 8
+          assert metadata['attempted_source_replicates'] == 1200
+          assert metadata['warning_endpoints_evaluated'] is False
+          n1 = next(row for row in pooled if int(row['patch_count']) == 1)
+          for metric in ('final_interaction_mean','final_effective_size_mean','realised_high_trait_mass_mean'):
+              assert float(n1[f'{metric}_ratio_to_n1_median']) == 1.0
+              assert float(n1[f'{metric}_reduction_from_n1_median']) == 0.0
+          svg = (out/'figure_s_fragmentation_gradient.svg').read_text(encoding='utf-8')
+          assert '<svg' in svg and 'paired H1-prepared sources' in svg
+          print('full gradient coverage validated')
+          PY
+      - name: Write checksums
+        run: |
+          cd artifacts/publication
+          find . -type f ! -name MANIFEST.sha256 -print0 | sort -z | xargs -0 sha256sum > MANIFEST.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h3-fragmentation-gradient-publication
+          path: artifacts/publication
+          if-no-files-found: error
+          retention-days: 90
