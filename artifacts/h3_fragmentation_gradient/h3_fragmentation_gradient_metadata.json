@@ -1,0 +1,25 @@
+{
+  "analysis": "post-review H3 fragmentation-gradient sensitivity",
+  "attempted_source_replicates": 1200,
+  "cell_count": 12,
+  "evidence_label": "new supplementary finite Type S sensitivity evidence",
+  "fresh_seed_family": [
+    20260820,
+    20260821,
+    20260822,
+    20260823,
+    20260824
+  ],
+  "patch_counts": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    12,
+    16
+  ],
+  "record_count": 9600,
+  "warning_endpoints_evaluated": false
+}
