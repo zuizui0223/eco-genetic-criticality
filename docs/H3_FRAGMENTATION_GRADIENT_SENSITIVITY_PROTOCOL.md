@@ -8,6 +8,10 @@ This campaign does not alter the closed H1/H3 evidence ledger or replace the can
 
 The canonical scientific state remains commit `dd8ee379d0d3518194c767d16402042525bc00dc`. The new campaign reuses that model closure and the already frozen 12 primary mutation-H1 cells, but uses a fresh seed family and new simulations.
 
+### Pre-outcome maintenance note
+
+The first execution attempt stopped before producing an admissible complete gradient because the existing private parent helper `mutation_primary_h1_h2_h3_chain._prepare_mutation_high_state` still called `canonical_h1_certificate` with the function's former positional API. The current certificate API is keyword-only. Before inspecting any fragmentation-gradient outcome, that call was changed to the exactly equivalent keyword arguments (`feedback_strength`, `area`, `area_reference`, `barrier`, `trait_parameters`). The parent-chain and new-gradient targeted tests passed after this compatibility-only change. No equation, parameter, seed, source-preparation rule, landscape design, or outcome definition was changed. The failed first execution is not evidence; the first complete run after this maintenance fix is the authoritative gradient campaign.
+
 ## Question
 
 At fixed total area, what happens to interaction state, local effective size, and realised high-trait mass as the same H1-prepared high full state is partitioned into progressively more **isolated** equal patches?
