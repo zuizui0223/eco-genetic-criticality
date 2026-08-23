@@ -7,6 +7,8 @@ name = "eco-genetic-criticality"
 version = "0.1.0"
 description = "Theorem-first models of eco-genetic criticality under finite populations."
 readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "pandas>=2.0"]
 
