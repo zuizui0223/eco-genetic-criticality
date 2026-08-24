@@ -82,6 +82,18 @@ The paper-facing theory draft is in [`manuscript/`](manuscript/). It separates e
 
 The H3 lifecycle is a declared stochastic model, not a universal claim that connectivity is beneficial. It can represent migration rescue, migration erosion, or no material effect under different declared kernels and life-cycle parameters. See `docs/h3_extinction_recolonisation_lifecycle.md`.
 
+## Repository ownership boundary
+
+This repository is the sole owner of eco-genetic criticality code and evidence.
+Conversely, RACH N1–N4 channel identifiability, theorem-to-model projection, and
+next-observation design are owned by
+[`zuizui0223/microdonta`](https://github.com/zuizui0223/microdonta).
+
+The former local copy of `theorem_projection_ledger.py` described microdonta
+backends and Campanula rather than the H1–H3 criticality programme. It has been
+removed together with its mirrored test. Cross-program context must use a link or
+an explicit adapter, not a second implementation.
+
 ## Scope
 
 This repository closes the active H1--H3 theorem and finite-bin closure program migrated from `microdonta`. Further biological closures, mutation models, threshold choices, or deterioration schedules should be developed as separately declared extensions rather than silently revising the final evidence ledger. It excludes generic RACH/rule-transition methods, Campanula-Izu case-study work, Streamlit tooling, attraction-trait models, and unrelated ABM families. Historical migration and campaign provenance remain available in Git history and the canonical scientific commit.
