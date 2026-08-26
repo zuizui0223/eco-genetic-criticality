@@ -12,6 +12,7 @@ on:
       - "manuscript/**"
       - "reproducibility/**"
       - "scripts/verify_release_contract.py"
+      - "tests/**"
       - ".github/workflows/submission-reproducibility.yml"
   pull_request:
     branches: [main]
@@ -24,6 +25,7 @@ on:
       - "manuscript/**"
       - "reproducibility/**"
       - "scripts/verify_release_contract.py"
+      - "tests/**"
       - ".github/workflows/submission-reproducibility.yml"
   workflow_dispatch:
 
