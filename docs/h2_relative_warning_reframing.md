@@ -97,4 +97,17 @@ configuration and for observed event pairs**. It does not establish H2-A, a
 universal early-warning rule, or a conclusion about the eleven
 calibration-unselected cells.
 
+## Historical ownership and validity boundary
+
+The H2-R result above is retained unchanged as a historical event-conditioned
+ordering benchmark. It does not compare signal occurrence in event trajectories
+with signal occurrence in the 48 non-event trajectories and therefore does not
+establish discrimination, specificity, risk separation, or predictive warning
+validity. It is not part of the standalone parent manuscript's headline claim
+set. Full-denominator predictive-validity assessment is owned by the separately
+versioned
+[`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions)
+repository; that ownership boundary does not rewrite the counts, thresholds, or
+ordering inequality recorded here.
+
 The complete final status is recorded in `docs/final_evidence_ledger.md`.

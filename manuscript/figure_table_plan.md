@@ -26,7 +26,7 @@ patch size
 - exact canonical-map theorem for interaction branch geometry;
 - conditional trait-margin implication;
 - finite trait–allele closure for realised occupancy and local \(N_e\);
-- censoring-aware finite assessment for warning order.
+- finite fragmentation-gradient assessment of distinct state responses.
 
 **Source.** Deterministic redraw from `docs/eco_genetic_hypothesis_program.md`
 and `manuscript/claim_evidence_map.md`.
@@ -69,47 +69,48 @@ low and high branches as a schematic condition, not a new empirical estimate.
 **Caption boundary.** The figure does not depict individual movement, abundance,
 extinction, or recolonisation.
 
-### Figure 4 — Predeclared finite-warning design
+### Figure 4 — Preregistered fragmentation-gradient design
 
-**Purpose.** Make the anti-selection logic auditable.
+**Purpose.** Make source preservation and the repeated-measures fragmentation
+contrast auditable.
 
 ```text
 H1-prepared full state
--> equal-isolated projection
--> trait-loss-only ramp-and-hold calibration
--> one selected domain
--> fresh seeds
--> six relative-warning endpoints
--> censored first-passage report
+-> one, two, three, four, six, eight, twelve, or sixteen equal isolated patches
+-> same prepared source represented at every patch count
+-> interaction / local N_e / realised high-trait mass
+-> potential viability versus realised occupancy
 ```
 
-**Source.** `docs/h2_relative_warning_reframing.md` and the final ledger.
+**Source.** `docs/H3_FRAGMENTATION_GRADIENT_SENSITIVITY_PROTOCOL.md` and
+`docs/H3_FRAGMENTATION_GRADIENT_SENSITIVITY_RESULTS.md`.
 
 **Required annotations.**
 
-- calibration sees no \(H_\alpha\), \(H_\gamma\), warning time, or lead time;
-- fresh validation seeds differ from calibration seeds;
-- non-events remain censored;
-- absolute threshold audit is secondary, not a selection stage.
+- the source full state is held fixed within each repeated-measures comparison;
+- master seeds and patch counts were declared before outcome inspection;
+- 1,037 sources support every patch-count projection;
+- the first stopped execution is not evidence.
 
-### Figure 5 — Relative versus absolute diversity-warning results
+### Figure 5 — State separation across the fragmentation gradient
 
-**Purpose.** Present the finite H2 result without overstating it.
+**Purpose.** Show why one eco-genetic summary cannot represent all target states.
 
-**Panel A.** Flow/count plot: 100 attempted sources → 83 available trajectories
-→ 35 observed trait-loss trajectories + 48 right-censored trajectories.
+**Panel A.** Retained interaction and local effective size versus patch count,
+showing continued declines after the first subdivision.
 
-**Panel B.** Six relative endpoints: each 35 valid pairs, 35 leads, 0 ties,
-0 lags.
+**Panel B.** Retained realised high-trait mass versus patch count, showing the
+initial loss followed by partial recovery.
 
-**Panel C.** Fixed absolute audit: \(H_\alpha\le0.20\) shows 14 leads / 6 lags
-among 20 valid pairs; \(H_\gamma\le0.20\) shows 8 leads / 8 lags among 16 valid
-pairs.
+**Panel C.** Potential viability and realised occupancy: viability changes from
+1,037/1,037 at one patch to 0/1,037 at every subdivision, while occupancy
+persists in approximately 99.6–100% of supported trajectories at generation 30.
 
-**Source.** `docs/final_evidence_ledger.md` and the committed H2-A audit CSVs.
+**Source.** The verified fragmentation-gradient publication artifact summarized
+in `docs/H3_FRAGMENTATION_GRADIENT_SENSITIVITY_RESULTS.md`.
 
-**Caption boundary.** The relative result is conditional Type S evidence in one
-selected configuration and for observed event pairs.
+**Caption boundary.** These are finite Type S responses under one declared
+closure, not a universal fragmentation dose–response or lag law.
 
 ## Main tables
 
@@ -124,11 +125,12 @@ Rows: interaction state, potential viability, realised high-trait occupancy,
 allele persistence, \(H_\alpha\), \(H_\gamma\), \(F_{ST}\). Columns: definition,
 where introduced, and what it is not equivalent to.
 
-### Table 3 — H2 calibration and independent validation ledger
+### Table 3 — Fragmentation-gradient state ledger
 
-Rows: calibration selection, source preparation, projection support, trait loss,
-relative-warning endpoints, absolute-threshold audit. Include numerical counts
-and the corresponding denominator.
+Rows: patch count, interaction retained, local effective-size retained, realised
+high-trait-mass retained, potential viability, and realised occupancy. Include
+the repeated-measures denominator and the single retained exception at eight
+patches.
 
 ## Supplementary figures
 
@@ -137,14 +139,20 @@ and the corresponding denominator.
   \(A/A_{\rm ref}=1\) example; label it as a numerical confirmation of the
   analytic branch geometry rather than an independent finite result.
 - **Figure S3:** First-passage bookkeeping with lead, tie, lag, and censored
-  outcomes.
-- **Figure S4:** Seed-block denominators and observed trait-loss counts for the
-  H2-R independent validation.
+  outcomes for the historical H2-R benchmark. Label it non-headline and
+  event-conditioned.
+- **Figure S4:** Historical H2-R denominators: 100 attempted, 83 available, 35
+  event trajectories, and 48 non-event trajectories. State explicitly that the
+  parent ordering result does not establish discrimination, specificity, risk
+  separation, or predictive warning validity.
+- **Figure S5:** Historical fixed-threshold H2-A lead/tie/lag audit.
 
 ## Implementation order
 
 1. Draw Figures 1 and 4 as conceptual diagrams from existing definitions.
 2. Generate Figure 2 directly from the canonical analytic functions.
-3. Generate Figure 5 from the existing committed H2 ledger CSVs and artifacts.
-4. Do not create a new “best warning metric” figure: the six endpoints are not
-   independent and the completed campaign did not select a winner.
+3. Generate Figure 5 from the verified fragmentation-gradient publication
+   artifact; do not rerun or retune the gradient.
+4. Keep H2-R/H2-A displays supplementary and historical. Do not create a new
+   “best warning metric” figure or infer predictive validity from event-conditioned
+   ordering.

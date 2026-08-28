@@ -5,8 +5,10 @@ A theorem-first research repository for finite-population eco-genetic criticalit
 ## Questions
 
 - **H1:** When can interaction feedback alter potential high-trait viability?
-- **H2:** Under what declared conditions can genetic warning precede realised high-trait loss?
 - **H3:** At fixed total area, when do isolation, migration rescue, and migration erosion produce different trait and genetic outcomes?
+- **State separation:** When do potential viability, realised occupancy,
+  demographic state, diversity, and allele persistence respond differently to
+  the same fragmentation contrast?
 
 ## Research architecture
 
@@ -28,7 +30,8 @@ The active H1–H3 finite-model campaign is closed. Its canonical results and li
 - **H1:** mutation-conditioned interaction memory is supported as finite Type S evidence in the declared closure.
 - **H3 / fragmentation:** conditional on valid H1 full-state transfer, equal isolation lowers interaction, local effective size, and realised high-trait mass before demographic disappearance.
 - **H2-A:** fixed absolute diversity thresholds `H_alpha,H_gamma <= 0.20` are not retained as a robust canonical warning rule after the no-resimulation audit found mixed lead/lag ordering.
-- **H2-R:** baseline-relative `H_alpha/H_gamma` erosion precedes observed realised trait loss in the inherited calibrated symmetric domain. The extension later prospectively reproduced all six relative warning orderings in an independent fresh-seed ensemble under the same frozen loss-generating state, without turning them into universal thresholds.
+- **Historical H2-R benchmark:** baseline-relative `H_alpha/H_gamma` erosion preceded observed realised trait loss in the inherited calibrated symmetric domain. This event-conditioned ordering is preserved as parent evidence, but it does not establish discrimination, specificity, event-risk separation, or predictive warning validity.
+- **Fragmentation-gradient state separation:** in a preregistered fresh-seed sensitivity, potential high-trait viability was lost at the first subdivision while realised occupancy persisted over the finite endpoint; interaction, local effective size, and realised high-trait mass then followed different gradient shapes.
 
 ## State-sufficiency result
 
@@ -38,9 +41,16 @@ A constructive alignment audit shows why the distinction matters. Two states can
 
 ## Submission role
 
-This repository is the **mechanistic parent** of the integrated Letter manuscript. It owns the theorem-guided interaction/fragmentation framework, the closed finite H1/H3 evidence ledger, state-sufficiency certificates, and the inherited conditional warning benchmark.
+This repository is the **mechanistic parent** of the integrated Letter manuscript and the source of a standalone state-separation manuscript. It owns the theorem-guided interaction/fragmentation framework, the closed finite H1/H3 evidence ledger, state-sufficiency certificates, the fresh fragmentation-gradient sensitivity, and the inherited H2-R event-conditioned benchmark.
 
 The companion repository, [`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions), is now the **condition-recovery, warning-replication/portability, state-representation, natural state-sufficiency, integrated-manuscript, and submission-bundle repository**. Its empirical programme tests whether candidate ecological state variables predict their downstream endpoints before asking whether geography or fragmentation history adds residual information.
+
+The standalone parent submission does **not** use H2-R as a headline or
+predictive-validity claim. Its active claim set is interaction bistability,
+migration bounds, finite fragmentation effects, and explicit separation of
+potential viability, realised occupancy, demographic state, diversity, and
+allele persistence. H2-R remains a historical event-conditioned record.
+Full-denominator warning validity belongs to the extension repository.
 
 The repositories remain separate computational provenance units. They are integrated at the argument, manuscript, reproducibility-contract, and release-package levels rather than by merging code or evidence ledgers.
 
@@ -82,7 +92,12 @@ Only ordinary `CI` and `Submission reproducibility` workflows should remain acti
 
 ## Manuscript synthesis
 
-The parent paper-facing theory material is in [`manuscript/`](manuscript/). It separates exact theorems, closure-conditional results, dynamic hypotheses, and finite Type S results. The integrated manuscript and the current natural-data synthesis live in the extension repository.
+The standalone parent paper-facing material is in [`manuscript/`](manuscript/).
+It separates exact theorems, closure-conditional results, and finite Type S
+state-separation results. The H2-R ordering remains available in the historical
+ledger and supplement but is outside the standalone headline claim set. The
+integrated manuscript, predictive-warning validity audit, and current
+natural-data synthesis live in the extension repository.
 
 ## Current model layers
 
