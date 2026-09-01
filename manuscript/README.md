@@ -1,6 +1,6 @@
 # Manuscript synthesis workspace
 
-**Working title:** *Interaction thresholds, fragmentation, and conditional genetic warning: a theorem-guided finite-model framework*
+**Working title:** *Interaction thresholds and state separation under fragmentation: a theorem-guided finite-model framework*
 
 This directory reorganizes the completed `eco-genetic-criticality` program for
 manuscript development. It introduces **no** new model closure, simulation,
@@ -32,6 +32,12 @@ The manuscript uses the following labels consistently:
 
 Words such as *prove*, *guarantee*, and *universal* are reserved for T/C claims
 with their assumptions stated. All finite numerical results remain Type S.
+
+The standalone claim set is restricted to interaction bistability, migration
+bounds, fragmentation effects, and state separation. H2-R remains an unchanged
+historical event-conditioned benchmark in the evidence ledger and supplement;
+it is not a headline or predictive-validity claim. Full-denominator warning
+validity belongs to `eco-genetic-warning-extensions`.
 
 ## Current drafting stage
 

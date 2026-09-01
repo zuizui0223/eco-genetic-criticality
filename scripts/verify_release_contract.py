@@ -26,6 +26,15 @@ def _fail(message: str) -> None:
     raise AssertionError(message)
 
 
+def _markdown_section(text: str, heading: str, next_heading: str) -> str:
+    try:
+        return text.split(heading, 1)[1].split(next_heading, 1)[0]
+    except IndexError as exc:
+        raise AssertionError(
+            f"manuscript section boundary missing: {heading} -> {next_heading}"
+        ) from exc
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Verify the frozen eco-genetic-criticality release contract."
@@ -86,6 +95,59 @@ def main() -> int:
     for identifier in ("H1", "H3", "H2-R", "H2-A"):
         if identifier not in ledger:
             _fail(f"final evidence ledger no longer names {identifier}")
+
+    submission = manifest["standalone_submission_claims"]
+    headline = set(submission["headline_claim_ids"])
+    historical = set(submission["historical_non_headline_claim_ids"])
+    if headline & historical:
+        _fail("standalone headline and historical claim IDs overlap")
+    if headline != {"T1", "T2", "C1", "T3", "T4", "H1-S", "H3-S", "H3-G"}:
+        _fail("standalone headline claim set drift")
+    if historical != {"H2-R", "H2-A"}:
+        _fail("historical non-headline claim set drift")
+    if submission["predictive_validity_owner"] != (
+        "zuizui0223/eco-genetic-warning-extensions"
+    ):
+        _fail("predictive-validity ownership drift")
+
+    main_text = (root / "manuscript/main_text.md").read_text(encoding="utf-8")
+    title = main_text.splitlines()[0]
+    abstract = _markdown_section(main_text, "## Abstract", "## 1. Introduction")
+    conclusion = _markdown_section(
+        main_text, "## 7. Conclusion", "## Data and code availability"
+    )
+    for location, text in (
+        ("title", title),
+        ("abstract", abstract),
+        ("conclusion", conclusion),
+    ):
+        lowered = text.casefold()
+        if "warning" in lowered or "early-warning" in lowered:
+            _fail(f"warning leaked into standalone manuscript {location}")
+
+    claim_map = (root / "manuscript/claim_evidence_map.md").read_text(
+        encoding="utf-8"
+    )
+    claim_map_flat = " ".join(claim_map.split())
+    for phrase in (
+        "historical event-conditioned ordering benchmark",
+        "does not establish discrimination, specificity",
+        "eco-genetic-warning-extensions",
+    ):
+        if phrase not in claim_map_flat:
+            _fail(f"claim firewall missing from claim map: {phrase}")
+    ledger_flat = " ".join(ledger.split())
+    for phrase in (
+        "historical event-conditioned",
+        "does not establish",
+        "discrimination",
+        "specificity",
+        "risk separation",
+        "predictive warning validity",
+        "eco-genetic-warning-extensions",
+    ):
+        if phrase not in ledger_flat:
+            _fail(f"H2-R validity boundary missing from ledger: {phrase}")
 
     print(
         json.dumps(

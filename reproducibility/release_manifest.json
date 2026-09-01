@@ -20,6 +20,24 @@
     "manuscript/claim_evidence_map.md": "5aaa2bee9dd7faedd9ca2229045c9ddbdcd49b9e",
     "manuscript/main_text.md": "dbc893b6356000a3a2d83ea5c7d001c3888a962f"
   },
+  "standalone_submission_claims": {
+    "headline_claim_ids": [
+      "T1",
+      "T2",
+      "C1",
+      "T3",
+      "T4",
+      "H1-S",
+      "H3-S",
+      "H3-G"
+    ],
+    "historical_non_headline_claim_ids": [
+      "H2-R",
+      "H2-A"
+    ],
+    "predictive_validity_owner": "zuizui0223/eco-genetic-warning-extensions",
+    "claim_ceiling": "H2-R is an event-conditioned ordering benchmark and does not establish discrimination, specificity, risk separation, or predictive warning validity"
+  },
   "canonical_claims": {
     "H1": "supported as finite Type S evidence in the declared closure",
     "H3": "supported conditionally on H1 full-state preparation and projection",

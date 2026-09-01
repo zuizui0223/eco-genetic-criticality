@@ -9,7 +9,7 @@ targeted and cannot quietly change the paper's mathematical claims.
 | manuscript location | citation purpose | constraint on wording |
 |---|---|---|
 | Introduction, paragraph 1 | Fragmentation can affect interactions, trait persistence, demography, and genetic variation. | Cite broad conceptual and empirical literature; retain “can,” not “always.” |
-| Introduction, paragraph 2 | Distinguish early-warning concepts from universal forecast claims. | Cite early-warning / critical-transition literature; do not cite it as proof of this model's H2-R result. |
+| Introduction, paragraph 2 | Distinguish analytical state variables from realised finite outcomes. | Cite state-representation and eco-evolutionary modelling literature; do not imply that one summary is sufficient for every target. |
 | Introduction, paragraph 3 | State-variable separation among viability, occupancy, diversity, and differentiation. | Cite relevant eco-evolutionary and population-genetic conceptual sources. |
 
 ## Analytical framework
@@ -20,12 +20,18 @@ targeted and cannot quietly change the paper's mathematical claims.
 | Section 4 | Migration matrices, source–sink networks, and stepping-stone dispersal. | Cite migration-network context; do not turn the common-floor theorem into a demographic-rescue claim. |
 | Section 5 | Finite population sampling, recruitment, and effective size. | Cite closure motivation; the finite implementation remains model-specific. |
 
-## Genetic warning section
+## Fragmentation-gradient section
 
 | manuscript location | citation purpose | constraint on wording |
 |---|---|---|
-| Section 6 | First-passage, right censoring, and event-time comparisons. | Cite methods context; do not replace the manuscript's explicit censoring definitions. |
-| Section 7 | Relative versus absolute thresholds. | Cite prior uses of relative and absolute warnings, while preserving that the present comparison is a Type S result. |
+| Section 5.1 | Fragmentation response curves and threshold-like changes. | Cite comparable designs as context; retain that the reported gradient is Type S evidence for the declared closure. |
+| Section 5.2 | Potential viability versus realised occupancy and transient persistence. | Cite state-separation and lagged-response context; do not promote the finite contrast to a universal lag law. |
+
+## Historical supplement
+
+| manuscript location | citation purpose | constraint on wording |
+|---|---|---|
+| Supplementary H2-R material | First-passage, right censoring, and event-conditioned ordering. | Keep H2-R outside the standalone headline claim set; do not infer discrimination, specificity, risk separation, or predictive warning validity. |
 
 ## Discussion
 
@@ -33,7 +39,7 @@ targeted and cannot quietly change the paper's mathematical claims.
 |---|---|---|
 | Discussion, paragraph 1 | Interaction thresholds and trait transitions. | Cite examples as motivation, not as validation of the exact sigmoid closure. |
 | Discussion, paragraph 2 | Genetic rescue, migration, and fragmentation. | Cite empirical/theoretical studies; preserve distinction between frequency mixing and demographic rescue. |
-| Discussion, paragraph 3 | Limits of early-warning generalization. | Cite cautionary literature; retain the selected-domain boundary. |
+| Discussion, paragraph 3 | Target-dependent state sufficiency and non-synchronous fragmentation responses. | Cite relevant state-space and eco-evolutionary response literature; retain the finite-closure boundary. |
 
 ## Bibliography guardrails
 
@@ -43,7 +49,10 @@ The literature pass must not alter these statements:
 2. Network theorems concern allele-frequency composition under row-stochastic
    mixing only.
 3. H1/H3 finite results remain Type S for the declared closure.
-4. H2-R is conditional Type S evidence for one calibration-selected configuration
-   and observed event pairs.
-5. H2-A is a negative robustness result in that selected closure, not a universal
+4. H3-G is finite state-separation evidence under the fixed gradient design, not
+   a universal dose–response or lag law.
+5. H2-R is historical event-conditioned Type S evidence for one
+   calibration-selected configuration and observed event pairs; predictive
+   validity belongs to `eco-genetic-warning-extensions`.
+6. H2-A is a negative robustness result in that selected closure, not a universal
    impossibility claim.

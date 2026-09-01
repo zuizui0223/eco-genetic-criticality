@@ -17,8 +17,24 @@ the appropriate label and the existing source.
 | C3 | If \(N_e\) increases with interaction state and transmission variance decreases with \(N_e\), low interaction branches erode expected local diversity faster. | C | `docs/eco_genetic_hypothesis_program.md`, G1 | “conditional on the stated monotonicities” | “interaction universally causes genetic erosion” |
 | H1-S | A mutation-conditioned high full state retained interaction memory in the declared finite continuation closure. | S | `docs/final_evidence_ledger.md`, H1 | “supported as Type S in the declared closure” | “proved H1 generally” |
 | H3-S | Equal isolation lowered interaction, local effective size, and realised high-trait mass conditional on H1 source preparation and conservation-aware projection. | S | `docs/final_evidence_ledger.md`, H1 and H3 | “finite result conditional on source preparation” | “fragmentation always lowers these quantities” |
-| H2-R | Relative decline in \(H_\alpha\) or \(H_\gamma\) preceded observed realised trait loss in all 35 valid pairs for each of six predeclared endpoints in the selected domain. | S | `docs/final_evidence_ledger.md`, H2-R; `docs/h2_relative_warning_reframing.md` | “all observed valid pairs in the selected closure” | “all trajectories”, “universal early-warning law” |
+| H3-G | In the fresh fragmentation gradient, potential high-trait viability was present in 1,037/1,037 one-patch outcomes and absent in 1,037/1,037 outcomes at every tested subdivision, while realised occupancy persisted in approximately 99.6–100% of supported trajectories and realised high-trait mass followed a non-monotone response after its initial loss. | S | `docs/H3_FRAGMENTATION_GRADIENT_SENSITIVITY_RESULTS.md` | “finite state-separation result under the fixed gradient design” | “universal lag”, “all state variables decline monotonically” |
+| H2-R | Relative decline in \(H_\alpha\) or \(H_\gamma\) preceded observed realised trait loss in all 35 valid pairs for each of six predeclared endpoints in the selected domain. This is a historical event-conditioned ordering benchmark, not a standalone submission claim. | S / historical non-headline | `docs/final_evidence_ledger.md`, H2-R; `docs/h2_relative_warning_reframing.md` | “all observed valid event pairs in the selected closure” | “all trajectories”, “universal early-warning law”, “discriminative”, “specific”, “risk separating”, “predictively valid warning” |
 | H2-A | Fixed thresholds \(H_\alpha,H_\gamma\le0.20\) were not retained as robust rules because the secondary audit observed lags. | S / negative robustness result | `docs/final_evidence_ledger.md`, H2-A; `docs/h2_relative_warning_reframing.md` | “not retained in the selected closure” | “proved false in all systems” |
+
+## Standalone submission claim set
+
+The standalone parent manuscript's headline claim IDs are `T1`, `T2`, `C1`,
+`T3`, `T4`, `H1-S`, `H3-S`, and `H3-G`. Its organizing conclusion is that
+potential viability, realised occupancy, demographic state, diversity, and
+allele persistence are distinct target-dependent states and need not share one
+fragmentation response.
+
+`H2-R` and `H2-A` remain in this map only as historical non-headline evidence.
+The H2-R observation is conditioned on realised-loss event pairs and does not
+establish discrimination, specificity, separation of event from non-event risk,
+or predictive warning validity. Those validity questions and their
+full-denominator audit are owned by
+[`zuizui0223/eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions).
 
 ## Non-negotiable reporting language for H2
 

@@ -1,6 +1,14 @@
 # Reproducibility guide
 
-This repository is the **mechanistic parent** of the integrated Ecology Letters submission. It contains the theorem-guided ecological framework and the closed finite-model evidence ledger. The companion repository, [`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions), contains the independently declared directional-transition campaign and assembles the integrated submission bundle.
+This repository is the **mechanistic parent** of the integrated Ecology Letters
+submission and the source of a standalone state-separation manuscript. It
+contains the theorem-guided ecological framework, the closed finite-model
+evidence ledger, and the preregistered fragmentation-gradient sensitivity. The
+companion repository,
+[`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions),
+contains the independently declared directional-transition campaign, owns
+full-denominator predictive-warning validity, and assembles the integrated
+submission bundle.
 
 The two repositories remain separate provenance units. Reproduction must not pool their trajectories or silently replace the parent scientific commit.
 
@@ -63,7 +71,12 @@ For a manuscript reproduction, use the locked numerical summaries and evidence l
 The parent result is bounded by the declared symmetric recurrent-mutation, finite trait-recruitment, full-state-transfer, fragmentation, and deterioration closures. In particular:
 
 - H1 and H3 are finite Type S results for the declared source and projection design;
-- H2-R is conditional on one trait-loss-only calibrated domain and observed event pairs;
+- the fresh fragmentation gradient is finite Type S state-separation evidence
+  under its fixed repeated-measures design;
+- H2-R is a historical event-conditioned benchmark conditional on one
+  trait-loss-only calibrated domain and observed event pairs; it does not
+  establish discrimination, specificity, risk separation, or predictive warning
+  validity;
 - H2-A is retained as a negative robustness audit for fixed absolute thresholds;
 - non-events remain censored;
 - migration composition bounds are not demographic or functional rescue theorems.

@@ -76,6 +76,17 @@ This supports only the following conditional statement:
 for the selected configuration and observed event pairs. It does not generalize
 to the other eleven calibration-unselected cells.
 
+This statement is preserved exactly as a **historical event-conditioned
+ordering benchmark**. It compares ordering only among trajectories in which
+realised trait loss was observed; it does not compare signal occurrence between
+event and non-event trajectories. It therefore does not establish
+discrimination, specificity, event-risk separation, or predictive warning
+validity. Those questions and the corresponding full-denominator audit are owned
+by the separately versioned
+[`eco-genetic-warning-extensions`](https://github.com/zuizui0223/eco-genetic-warning-extensions)
+repository. Nothing in that extension silently changes the parent counts or the
+conditional inequality recorded here.
+
 ## H2-A: fixed-threshold secondary audit and retirement
 
 H2-A existed before H2-R and used the fixed thresholds
@@ -105,8 +116,11 @@ appears to work.
 
 ## Repository closure rule
 
-The canonical claims of this repository are now H1, H3, and the conditional
-H2-R result above. The H2-A audit is archived as a negative robustness result.
+The canonical historical evidence of this repository remains H1, H3, and the
+conditional H2-R result above. The standalone parent manuscript's active claim
+set is H1/H3, the analytical interaction and migration results, and explicit
+state separation; H2-R is retained as historical non-headline evidence. The H2-A
+audit is archived as a negative robustness result.
 Any future attempt to alter the biological closure, use a different mutation
 model, change the absolute threshold, or search new deterioration schedules
 belongs in a new extension project with a separately declared protocol. It must

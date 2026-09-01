@@ -1,4 +1,4 @@
-# Interaction thresholds, fragmentation, and conditional genetic warning: a theorem-guided finite-model framework
+# Interaction thresholds and state separation under fragmentation: a theorem-guided finite-model framework
 
 **Draft v0.1 — theory and existing-results synthesis**
 
@@ -20,18 +20,20 @@ mixing matrix. We then formulate a finite trait–allele closure in which potent
 viability, realised trait occupancy, local diversity, metapopulation diversity,
 and allele persistence are distinct states. In that closure, equal isolation from
 an H1-prepared full state lowered interaction, local effective size, and realised
-high-trait mass. A predeclared, trait-loss-only calibration identified one
-ramp-and-hold deterioration configuration for an independent genetic-warning
-assessment. In the selected configuration, baseline-relative declines in
-within-patch and metapopulation diversity preceded every observed realised
-trait-loss event across six predeclared endpoints; trajectories without loss in
-the finite horizon remained censored. Fixed absolute diversity thresholds showed
-mixed lead–lag ordering and were therefore not retained as a robust warning rule.
-The framework clarifies which conclusions are theorems, which are conditional on
-a closure, and which are finite Type S evidence.
+high-trait mass. A preregistered fresh-seed fragmentation gradient then showed
+that these responses did not share one dose–response shape. Potential high-trait
+viability changed from present in 1,037/1,037 one-patch outcomes to absent in
+1,037/1,037 outcomes at every tested subdivision, while realised high-trait
+occupancy persisted at the 30-generation endpoint in approximately 99.6–100% of
+supported trajectories. Interaction and local effective size declined further
+with patch count, whereas realised high-trait mass partially recovered after its
+initial loss. Thus no single eco-genetic summary can stand in for potential
+viability, realised occupancy, demographic state, diversity, and allele
+persistence. The framework clarifies which conclusions are theorems, which are
+conditional on a closure, and which are finite Type S evidence.
 
 **Keywords:** positive feedback; bistability; fragmentation; genetic diversity;
-early warning; first-passage time; censoring; eco-evolutionary dynamics
+state separation; eco-evolutionary dynamics
 
 ---
 
@@ -70,13 +72,15 @@ high-trait viability result. Second, we state migration bounds that are valid fo
 arbitrary row-stochastic network mixing matrices. Third, we specify a finite
 trait–allele experiment in which potential viability, realised occupancy,
 allele-frequency persistence, and diversity metrics are tracked separately.
-Fourth, we formulate warning assessment as a censoring-aware first-passage
-comparison and report a predeclared finite validation of relative genetic
-warnings. The study does not claim a universal biological early-warning law or an
-estimate of any real mutation parameter.
+Fourth, we use a preregistered fragmentation gradient to show that potential
+viability, realised occupancy, interaction, and effective-size responses do not
+collapse to one monotone fragmentation response. The study does not estimate any
+real mutation parameter or treat one model summary as a sufficient biological
+state.
 
 **[Literature insertion point: ecological critical transitions, positive
-frequency dependence, fragmentation genetics, and early-warning theory.]**
+frequency dependence, fragmentation genetics, and eco-evolutionary state
+representation.]**
 
 ---
 
@@ -303,116 +307,39 @@ the prepared high-state composition before projection, the finite comparison
 addresses the stated counterfactual: what changes when the same prepared source
 is isolated into equal fragments?
 
----
+### 5.1 Fragmentation-gradient sensitivity
 
-## 6. Genetic warning as a censored first-passage problem
+A preregistered post-review sensitivity campaign projected 1,037 independently
+prepared high-state sources into one, two, three, four, six, eight, twelve, and
+sixteen equal isolated patches. The historical one-versus-four contrast was
+already present at the first subdivision. At two patches, the pooled paired
+medians retained 0.001744 of one-patch interaction, 0.221311 of one-patch local
+effective size, and 0.282918 of one-patch realised high-trait mass. All three
+quantities were below their paired one-patch value in 1,037/1,037 supported
+sources.
 
-### 6.1 Event definitions
+The three response shapes then separated. Interaction and local effective size
+continued to decline with patch count in every frozen primary cell. Realised
+high-trait mass instead showed a sharp initial loss followed by partial recovery:
+its pooled retained fraction was 0.2829 at two patches, 0.3018 at four patches,
+and 0.3939 at sixteen patches. The result therefore does not support a universal
+smooth fragmentation dose–response shared by all ecological quantities.
 
-Let \(\tau_T\) be first post-baseline realised high-trait loss. For a diversity
-summary \(H_x(t)\), where \(x\in\{\alpha,\gamma\}\), and a relative decline
-fraction \(r\), define
+### 5.2 Potential viability and realised occupancy
 
-\[
-\tau_{\Delta H_x(r)}=
-\inf\{t>0:H_x(t)\le(1-r)H_x(0)\}.
-\]
-
-The relative-warning question is
-
-\[
-\tau_{\Delta H_x(r)}<\tau_T,
-\qquad r\in\{0.05,0.10,0.20\}.
-\]
-
-A crossing at \(t=0\) is not counted as an early warning. If either a warning or
-trait-loss event is not observed within the finite horizon, the comparison is
-censored rather than assigned the terminal generation.
-
-### 6.2 Calibration before warning assessment
-
-A deterioration schedule must not be selected because it produces favourable
-warning order. The analysis therefore separated schedule calibration from
-warning assessment. Calibration used post-baseline realised high-trait loss only
-and selected a schedule only when every calibration seed block had a conditional
-trait-loss frequency in the predeclared interval \([0.30,0.70]\). Diversity
-values, warning times, leads, lags, and lead times were excluded from this stage.
-
-The initial linear-ramp family selected no cell. A predeclared ramp-and-hold
-family then selected one configuration:
-
-```text
-mutation rate = 0.10
-A_ref = 0.8
-kappa = 6.0
-equal-isolated landscape
-ramp = 30 generations
-hold = 90 generations
-normalized barrier increase = 0.15
-```
-
-The five calibration seed-block trait-loss frequencies were \(0.50,0.40,0.40,
-0.50,0.50\). The other eleven primary cells were not carried forward to warning
-validation.
-
-### 6.3 Conditional and unconditional reporting
-
-For every warning–trait comparison, the analysis retains the valid-pair count,
-the conditional lead probability among observed pairs, and the all-replicate
-observed-lead fraction. These quantities answer different questions. A
-conditional lead probability of one is not interpretable without the number of
-valid pairs and the amount of censoring. Conversely, a low unconditional fraction
-can arise because few trajectories reached both events rather than because the
-observed ordering was unfavourable.
+The gradient also separated two states that a single loss label would merge. At
+one patch, potential high-trait viability was present in 1,037/1,037 supported
+outcomes. It was absent in 1,037/1,037 outcomes at every tested subdivision from
+two to sixteen patches. Nevertheless, realised high-trait occupancy persisted at
+the 30-generation endpoint in approximately 99.6–100% of supported trajectories.
+The carried full state can therefore retain realised occupancy for a finite
+interval after the interaction environment no longer supports potential
+viability. This is finite Type S state-separation evidence, not a universal lag
+law.
 
 ---
 
-## 7. Existing finite results
-
-### 7.1 Relative warnings
-
-Independent validation used fresh master seeds `20261110`–`20261114`, with 20
-replicates per seed, in the locked configuration above. Of 100 attempted sources,
-83 produced an H1-prepared and projection-supported trajectory. Thirty-five of
-those 83 trajectories reached realised trait loss within the scheduled horizon;
-the remaining 48 available trajectories are right-censored for trait loss.
-
-For every one of the six predeclared endpoints—\(H_\alpha\) and \(H_\gamma\) at
-relative declines \(r=0.05,0.10,0.20\)—all 35 valid same-replicate comparisons
-had a diversity warning before realised trait loss. There were zero ties and zero
-lags among valid pairs. This is Type S evidence that, in the selected finite
-closure and among observed event pairs,
-
-\[
-\tau_{\Delta H_x(r)}<\tau_T,
-\qquad x\in\{\alpha,\gamma\},\quad r\in\{0.05,0.10,0.20\}.
-\]
-
-The result does not establish an ordering in the censored trajectories, does not
-generalize to the eleven calibration-unselected cells, and does not establish a
-universal genetic early-warning law.
-
-### 7.2 Absolute thresholds
-
-The earlier absolute-threshold formulation used
-
-\[
-H_\alpha\le0.20,
-\qquad H_\gamma\le0.20.
-\]
-
-These thresholds were retained unchanged for a secondary audit of the raw
-independent-validation series. The audit found mixed ordering: among valid pairs,
-\(H_\alpha\le0.20\) yielded 14 leads and 6 lags, whereas
-\(H_\gamma\le0.20\) yielded 8 leads and 8 lags. Because observed lags prevent a
-uniform ordering claim, neither fixed threshold is retained as a robust canonical
-warning rule in the selected closure. This is a negative robustness result, not a
-proof that any absolute threshold is impossible in every model or biological
-system.
-
----
-
-## 8. Discussion
+## 6. Discussion
 
 The framework makes three distinctions that are often obscured in discussions of
 eco-genetic criticality.
@@ -428,35 +355,38 @@ frequency update provides exact composition bounds, but it does not describe
 individual abundance, trait propagules, extinction–recolonisation, or demographic
 rescue. Those require their own life-cycle map.
 
-Third, an apparent genetic warning depends on its event definition and on its
-observation process. The finite result retained here is not that a universal
-fixed diversity threshold forecasts trait collapse. Rather, it is a conditional
-relative-warning ordering observed after trait-loss-only schedule calibration in
-one declared finite closure. The contrast between the relative and absolute
-formulations is informative: the relevant signal in this closure was erosion
-relative to a trajectory's own baseline, not a stable absolute diversity cut-off.
+Third, potential viability, realised occupancy, interaction, effective size,
+diversity, and allele persistence are not interchangeable measurements of one
+latent ecological condition. The fragmentation gradient provides a concrete
+counterexample to such compression: potential viability disappeared at the first
+subdivision, realised occupancy persisted over the finite endpoint, interaction
+and effective size continued downward, and realised high-trait mass partially
+recovered. Which state is sufficient therefore depends on the scientific target.
 
 The main limitation is therefore also a guide for future work. The symmetric
 mutation operator, finite trait-recruitment closure, full-state transfer rule,
-and selected deterioration path define the boundary of the Type S result.
-Changing any of them is an extension project, not a parameter tweak inside the
-present claim. The present manuscript does not attempt such an extension.
+and fixed fragmentation-gradient design define the boundary of the Type S
+results. Changing any of them is an extension project, not a parameter tweak
+inside the present claim. The present manuscript does not attempt such an
+extension.
 
 ---
 
-## 9. Conclusion
+## 7. Conclusion
 
 A transparent eco-genetic criticality program can combine exact mathematics with
 finite stochastic experiments without conflating their evidential status. For a
 canonical positive-feedback map, branch geometry and stability are analytically
 specified. For network mixing, common-floor and focal-rescue bounds are exact for
-the declared matrix update. A finite trait–allele closure then permits explicit,
-censoring-aware tests of realised trait and genetic event ordering. Within the
-selected finite deterioration configuration, baseline-relative diversity erosion
-preceded every observed realised trait-loss event, whereas fixed absolute
-thresholds did not provide a robust rule. This distinction between theorem,
-conditional result, and finite evidence is the central contribution of the
-framework.
+the declared matrix update. The finite closure and preregistered fragmentation
+gradient then show that potential viability, realised occupancy, interaction,
+effective size, diversity, and allele persistence cannot be replaced by one
+eco-genetic summary. Potential viability can disappear while realised occupancy
+persists, and different realised quantities can follow different fragmentation
+response shapes. The central contribution is therefore both an evidential
+discipline—theorem, conditional result, and finite evidence remain separate—and a
+state discipline: no transition label stands in for the distinct biological
+objects required by different questions.
 
 ---
 
@@ -464,7 +394,12 @@ framework.
 
 All equations, finite closures, tests, workflows, and evidence ledgers described
 here are contained in the `eco-genetic-criticality` repository. The manuscript
-draft introduces no new simulation output.
+draft introduces no new simulation output. The closed H2-R event-conditioned
+ordering benchmark remains preserved in the repository's historical evidence
+ledger and mathematical supplement, but it is not part of this standalone
+manuscript's headline or predictive-validity claim set. Predictive warning
+validity is assessed in the separately versioned `eco-genetic-warning-extensions`
+repository.
 
 ## Citation note
 
