@@ -11,7 +11,7 @@ on:
       - 'manuscript/submission_metadata.md'
       - 'manuscript/VENUE_AUDIT_2026-09-05.md'
       - 'artifacts/h3_fragmentation_gradient/**'
-      - 'src/eco_genetic_criticality/submission_figures.py'
+      - 'causal_model/submission_figures.py'
       - 'scripts/build_egc_submission_bundle.py'
       - 'tests/test_egc_submission_bundle.py'
       - '.github/workflows/egc-submission.yml'
