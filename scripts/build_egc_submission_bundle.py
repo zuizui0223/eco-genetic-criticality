@@ -5,7 +5,7 @@ import hashlib
 import shutil
 from pathlib import Path
 
-from eco_genetic_criticality.submission_figures import (
+from causal_model.submission_figures import (
     validate_gradient_summary,
     write_analytical_boundaries_figure,
     write_architecture_figure,
@@ -51,7 +51,6 @@ def _validate_bundle(out: Path) -> None:
     if not required <= observed:
         raise RuntimeError(f"EGC submission bundle is missing main displays: {sorted(required-observed)}")
 
-    # Downstream-series numerical results must not enter the parent submission.
     for forbidden in ("0.2543", "+5.33", "+5.20", "35/35", "48/48", "33/33", "49/49"):
         if forbidden in manuscript:
             raise RuntimeError(f"downstream EGWE result leaked into EGC manuscript: {forbidden}")
