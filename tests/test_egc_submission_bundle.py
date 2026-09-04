@@ -9,6 +9,10 @@ ROOT = Path(__file__).resolve().parents[1]
 TITLE = "Interaction thresholds and state separation under fragmentation: a theorem-guided finite-model framework"
 
 
+def _flat(text: str) -> str:
+    return " ".join(text.split())
+
+
 def test_egc_submission_documents_are_synchronized() -> None:
     manuscript = (ROOT / "manuscript/main_text.md").read_text(encoding="utf-8")
     cover = (ROOT / "manuscript/cover_letter_theoretical_ecology.md").read_text(encoding="utf-8")
@@ -27,9 +31,10 @@ def test_egc_submission_documents_are_synchronized() -> None:
 
 def test_parent_claim_firewall_excludes_downstream_headline_results() -> None:
     manuscript = (ROOT / "manuscript/main_text.md").read_text(encoding="utf-8")
+    flat = _flat(manuscript)
     for token in ("0.2543", "+5.33", "+5.20", "35/35", "48/48", "33/33", "49/49"):
         assert token not in manuscript
-    assert "Predictive warning validity is assessed" in manuscript
+    assert "Predictive warning validity is assessed in the separately versioned `eco-genetic-warning-extensions` repository." in flat
     assert "state sufficiency" not in manuscript.casefold()
 
 
