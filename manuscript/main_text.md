@@ -1,6 +1,6 @@
 # Interaction thresholds and state separation under fragmentation: a theorem-guided finite-model framework
 
-**Draft v0.1 — theory and existing-results synthesis**
+**Draft v0.2 — literature-positioned theory and existing-results synthesis**
 
 ## Abstract
 
@@ -47,6 +47,17 @@ need not equal a change in metapopulation diversity; and a finite trajectory tha
 does not reach an event within an observation window is censored rather than
 negative evidence for that event.
 
+Ecological deterioration is also measured through biological objects that can
+fail on different schedules. Strongly interacting species can cease to deliver
+ecological function before numerical extinction, and interaction loss itself can
+precede species loss (Soulé et al. 2005; McConkey & Drake 2006;
+Valiente-Banuet et al. 2015). Genetic diversity is ecologically consequential
+without being a context-free surrogate for realised ecological function (Hughes
+et al. 2008). These observations motivate treating interaction support,
+potential viability, realised occupancy, demographic state, and genetic
+summaries as distinct biological objects rather than interchangeable readouts of
+one latent deterioration axis.
+
 The central aim of this study is therefore methodological as much as ecological:
 to construct an explicit logical bridge from interaction feedback to trait and
 genetic outcomes without allowing results from a finite simulation to silently
@@ -65,6 +76,26 @@ an equation, a life-cycle map, or an explicitly declared finite closure. The
 benefit of this separation is that it identifies where exact mathematics ends and
 where model-dependent inference begins.
 
+Fragmentation complicates this separation because habitat amount, spatial
+configuration, landscape quality, movement, and interaction opportunities need
+not vary in the same direction. Eco-evolutionary theory has long emphasized that
+dispersal, demography, and selection interact in fragmented landscapes (Legrand
+et al. 2017), while recent syntheses argue explicitly for functional rather than
+purely structural interpretations of fragmentation (Benitez et al. 2025).
+Empirical network work likewise shows that habitat loss and fragmentation per se
+can have different consequences for interaction structure (Gama et al. 2025),
+and that landscape quality can condition responses to habitat loss and
+fragmentation (Fletcher et al. 2026). We therefore treat patchwise interaction
+support and movement operators as declared mechanisms rather than assuming that
+one fragmentation label uniquely determines ecological or genetic state.
+
+Interaction state is retained separately for the same reason. Ecological
+function and persistence can depend on interaction architecture and partner
+functional composition rather than species counts alone (Hiraiwa & Ushimaru
+2024; Domínguez-Garcia et al. 2024). These empirical systems do not instantiate
+the present closure; they motivate keeping interaction support distinct from
+abundance and diversity summaries.
+
 We make four contributions using material already established in the associated
 repository. First, we state the exact fixed-point geometry of a canonical
 positive-feedback reduction and show how it supports a branch-dependent
@@ -78,9 +109,11 @@ collapse to one monotone fragmentation response. The study does not estimate any
 real mutation parameter or treat one model summary as a sufficient biological
 state.
 
-**[Literature insertion point: ecological critical transitions, positive
-frequency dependence, fragmentation genetics, and eco-evolutionary state
-representation.]**
+Positive feedback and alternative stable states are central motifs in
+critical-transition theory (Scheffer et al. 2009). Here, however, the analytical
+result is deliberately narrower: bistability is proved only for the declared
+one-dimensional sigmoid map, and no generic early-warning property follows from
+that geometry.
 
 ---
 
@@ -350,10 +383,29 @@ branch geometry, and the trait-margin condition supplies potential viability,
 but finite recruitment and inheritance are needed before realised trait occupancy
 can be assessed.
 
+The resulting separation between potential support and realised occupancy has a
+natural ecological interpretation. Functional contributions can disappear before
+population disappearance, as illustrated by interaction-dependent seed dispersal
+and other strongly interacting species (Soulé et al. 2005; McConkey & Drake
+2006; Valiente-Banuet et al. 2015). The EGC result is not an empirical estimate
+of that lag. It supplies a finite closure in which the analogous logical
+separation can be made explicit: a trait can remain realised for a finite interval
+after the declared interaction environment no longer supports its potential
+viability.
+
 Second, migration statements depend on what is being moved. The row-stochastic
 frequency update provides exact composition bounds, but it does not describe
 individual abundance, trait propagules, extinction–recolonisation, or demographic
 rescue. Those require their own life-cycle map.
+
+This operator-specific caution is especially important in fragmented landscapes,
+where dispersal can couple demography, genetic composition, and selection in
+different ways (Legrand et al. 2017). Plant genetic responses to habitat
+fragmentation are empirically heterogeneous rather than governed by one universal
+structural-fragmentation effect (Miguel-Peñaloza et al. 2023). The
+row-stochastic allele-frequency bounds in EGC should therefore be read as exact
+statements about the declared composition operator, not as a general theorem that
+connectivity is beneficial or harmful.
 
 Third, potential viability, realised occupancy, interaction, effective size,
 diversity, and allele persistence are not interchangeable measurements of one
@@ -361,7 +413,17 @@ latent ecological condition. The fragmentation gradient provides a concrete
 counterexample to such compression: potential viability disappeared at the first
 subdivision, realised occupancy persisted over the finite endpoint, interaction
 and effective size continued downward, and realised high-trait mass partially
-recovered. Which state is sufficient therefore depends on the scientific target.
+recovered. **Which biological state is relevant therefore depends on the
+scientific question; forecast sufficiency is a separate problem developed in the
+extension programme.**
+
+Genetic diversity can affect ecological processes (Hughes et al. 2008), and
+fragmented-landscape dynamics can involve coupled demographic and evolutionary
+feedbacks (Legrand et al. 2017; Govaert et al. 2019), but those observations do
+not license a single summary to stand in for interaction support, potential
+viability, realised occupancy, effective size, and allele persistence. The
+fragmentation gradient provides a controlled finite counterexample to that
+compression under one declared closure.
 
 The main limitation is therefore also a guide for future work. The symmetric
 mutation operator, finite trait-recruitment closure, full-state transfer rule,
@@ -401,8 +463,6 @@ manuscript's headline or predictive-validity claim set. Predictive warning
 validity is assessed in the separately versioned `eco-genetic-warning-extensions`
 repository.
 
-## Citation note
-
-This first drafting pass intentionally contains no external literature citations.
-A dedicated literature pass should fill the marked contextual citation slots
-without changing the mathematical statements or finite-result ledger.
+The load-bearing external bibliography for this standalone manuscript is recorded
+in `manuscript/references.md`; broader warning, state-sufficiency, and natural-data
+references remain in their owning companion manuscripts.
