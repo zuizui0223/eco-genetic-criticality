@@ -1,0 +1,56 @@
+name: EGC standalone submission bundle
+
+on:
+  pull_request:
+    paths:
+      - 'manuscript/main_text.md'
+      - 'manuscript/references.md'
+      - 'manuscript/submission_display_allocation.md'
+      - 'manuscript/table1_evidence_and_states.md'
+      - 'manuscript/cover_letter_theoretical_ecology.md'
+      - 'manuscript/submission_metadata.md'
+      - 'manuscript/VENUE_AUDIT_2026-09-05.md'
+      - 'artifacts/h3_fragmentation_gradient/**'
+      - 'src/eco_genetic_criticality/submission_figures.py'
+      - 'scripts/build_egc_submission_bundle.py'
+      - 'tests/test_egc_submission_bundle.py'
+      - '.github/workflows/egc-submission.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-egc-submission:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install package and test tooling
+        run: |
+          python -m pip install --upgrade pip pytest
+          python -m pip install -e .
+      - name: Run EGC submission contract tests
+        run: python -m pytest -q tests/test_egc_submission_bundle.py tests/test_release_contract.py
+      - name: Build EGC submission bundle
+        run: |
+          python scripts/build_egc_submission_bundle.py \
+            --repo-root . \
+            --output egc_submission
+      - name: Verify main displays and manifest
+        run: |
+          test -s egc_submission/MANIFEST.sha256
+          test -s egc_submission/figures/figure1_architecture.svg
+          test -s egc_submission/figures/figure2_analytical_boundaries.svg
+          test -s egc_submission/figures/figure3_fragmentation_gradient.svg
+          test -s egc_submission/figures/figure4_viability_vs_occupancy.svg
+          test -s egc_submission/manuscript/table1_evidence_and_states.md
+          ! grep -R '0.2543\|+5.33\|+5.20\|35/35\|48/48\|33/33\|49/49' egc_submission/manuscript/main_text.md
+      - name: Upload EGC submission artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: egc-theoretical-ecology-submission
+          path: egc_submission/
+          if-no-files-found: error
